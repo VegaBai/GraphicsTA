@@ -14,6 +14,12 @@ $RECYCLE.BIN/
 *.msm
 *.msp
 
+#VS
+GraphicsPad/Debug/
+GraphicsPad/.vs/
+GraphicsPad/x64/
+
+
 # Windows shortcuts
 *.lnk
 
