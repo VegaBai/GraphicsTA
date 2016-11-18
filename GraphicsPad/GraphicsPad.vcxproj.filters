@@ -11,7 +11,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MeGlWindow.h" />
-    <ClInclude Include="FragmentShaderCode.glsl" />
     <ClInclude Include="Primitives\Vertex.h" />
     <ClInclude Include="Primitives\ShapeData.h" />
     <ClInclude Include="Primitives\ShapeGenerator.h" />
@@ -22,10 +21,12 @@
     <ClInclude Include="Renderer\MeRenderer.h" />
     <ClInclude Include="Renderer\Renderable.h" />
     <ClInclude Include="Renderer\ShaderProgramInfo.h" />
+    <ClInclude Include="Primitives\TeapotData.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="VertexShaderCode.glsl" />
     <None Include="FragmentShaderCodeNoLight.glsl" />
     <None Include="VertexShaderCodeNoLight.glsl" />
+    <None Include="VertexShaderCode.glsl" />
+    <None Include="FragmentShaderCode.glsl" />
   </ItemGroup>
 </Project>

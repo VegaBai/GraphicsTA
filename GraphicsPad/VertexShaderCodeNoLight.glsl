@@ -6,7 +6,7 @@ in layout(location=2) vec3 vertexNormal;
 in layout(location=3) vec2 uvPosition;
 
 
-uniform mat4 fullTransformMatrix;
+uniform mat4 mvp;
 
 out vec3 v_position;
 out vec3 v_vertexNormal;
@@ -15,7 +15,7 @@ out vec2 v_uvPosition;
 void main()
 {
 	vec4 v = vec4(position, 1.0);
-	gl_Position = fullTransformMatrix * v;
+	gl_Position = mvp * v;
 
 	v_position = position;
 	v_vertexNormal = vertexNormal;

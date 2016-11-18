@@ -1,12 +1,12 @@
 #pragma once
 #include <gl\glew.h>
-class Geometry
+struct BufferInfo;
+
+struct Geometry
 {
-	
-public:
-	GLuint vertexDataBufferBufferByteOffset;
-	GLuint indexDataBufferBufferByteOffset;
-	Geometry();
-	~Geometry();
+	const BufferInfo* buffer;
+	GLuint vertexDataBufferByteOffset;
+	GLuint indexDataBufferByteOffset;
+	GLuint numIndices;
 };
 

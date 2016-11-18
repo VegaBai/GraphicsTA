@@ -8,11 +8,14 @@
 #include <glm\glm.hpp>
 #include <Renderer\ShaderProgramInfo.h>
 #include <string>
+#include <Camera.h>
 
 
 class MeRenderer : public QGLWidget
 {
 	static MeRenderer* instance;
+
+	Camera camera;
 
 	BufferInfo bufferInfo;
 
@@ -42,8 +45,13 @@ class MeRenderer : public QGLWidget
 	MeRenderer& operator=(MeRenderer&);
 	~MeRenderer();
 
+	glm::vec3 lightPosition = glm::vec3(-2.0f, 2.0f, -3.0f);
+
 protected:
-	void initialize();
+	void initializeGL();
+	void paintGL();
+	void mouseMoveEvent(QMouseEvent* e);
+	void keyPressEvent(QKeyEvent* e);
 
 public:
 	Geometry* addGeometry(void* verts, uint vertexDataSize,

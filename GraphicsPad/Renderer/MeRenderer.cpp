@@ -1,11 +1,14 @@
 //#include <GL\glew.h>
 
-#include <Renderer\MeRenderer.h>
-//#include <Renderer\BufferInfo.h>
-//#include <Renderer\Renderable.h>
+
 #include <cassert>
 #include <fstream>
 #include <iostream>
+#include <QtGui\qmouseevent>
+#include <QtGui\qkeyevent>
+#include <glm\gtx\transform.hpp>
+#include <Renderer\MeRenderer.h>
+#include <Primitives\Vertex.h>
 using std::string;
 
 
@@ -17,12 +20,73 @@ MeRenderer::MeRenderer()
 {
 	nextGeometryIndex = 0;
 	nextRenderableIndex = 0;
+	nextShaderProgramIndex = 0;
 }
 
-void MeRenderer::initialize()
+void MeRenderer::initializeGL()
 {
+	glEnable(GL_DEPTH_TEST);
+//	glEnable(GL_CULL_FACE);
 	glewInit();
-	initializeBuffer();
+	initializeBuffer();	
+}
+
+void MeRenderer::paintGL()
+{
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glViewport(0, 0, width(), height());
+//	glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+
+	glm::mat4 worldToProjection = 
+		glm::perspective(60.0f, ((float)width())/height(), 0.01f, 20.0f) * 
+		camera.getWorldToViewMatrix();
+
+	for (GLuint i = 0; i < nextRenderableIndex; i++)
+	{
+		const Renderable* victim = renderables + i;
+		const Geometry* g = victim->geometry;
+
+		glBindBuffer(GL_ARRAY_BUFFER, g->buffer->bufferID);
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+		glEnableVertexAttribArray(2);
+		glEnableVertexAttribArray(3);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
+			sizeof(Vertex), (void*)(g->vertexDataBufferByteOffset));
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,
+			sizeof(Vertex), (void*)(g->vertexDataBufferByteOffset + sizeof(float) * 3));
+		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE,
+			sizeof(Vertex), (void*)(g->vertexDataBufferByteOffset + sizeof(float) * 6));
+		glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE,
+			sizeof(Vertex), (void*)(g->vertexDataBufferByteOffset + sizeof(float) * 9));
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g->buffer->bufferID);
+
+		glUseProgram(victim->shaderProgramInfo->programID);
+		GLuint mvpLocation = glGetUniformLocation(victim->shaderProgramInfo->programID, "mvp");
+/*
+		// ambient light
+		GLint ambientLightUniformLocation = glGetUniformLocation(victim->shaderProgramInfo->programID, "ambientLight");
+		glm::vec3 ambientLight(0.3f, 0.0f, 0.0f);
+		glUniform3fv(ambientLightUniformLocation, 1, &ambientLight[0]);
+		// diffuse light
+		GLint diffuseLightPositionUniformLocation = glGetUniformLocation(victim->shaderProgramInfo->programID, "diffuseLightPosition");
+		glUniform3fv(diffuseLightPositionUniformLocation, 1, &lightPosition[0]);
+		// for specular
+		GLint eyePositionWorldUniformLocation = glGetUniformLocation(victim->shaderProgramInfo->programID, "eyePositionWorld");
+		glm::vec3 eyePosition = camera.getPosition();
+		glUniform3fv(eyePositionWorldUniformLocation, 1, &eyePosition[0]);
+		GLint modelToWorldUniformTransform = glGetUniformLocation(victim->shaderProgramInfo->programID, "modelToWorldTransform");
+		glUniformMatrix4fv(modelToWorldUniformTransform, 1, GL_FALSE, &victim->modelToWorld[0][0]);
+*/
+//		if (mvpLocation != -1)
+//		{
+			glm::mat4 mvp = worldToProjection * victim->modelToWorld;
+			glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, &mvp[0][0]);
+//		}
+
+		glDrawElements(GL_TRIANGLES, victim->geometry->numIndices, GL_UNSIGNED_SHORT, 
+			(void*)(victim->geometry->indexDataBufferByteOffset));
+	}
 	
 }
 
@@ -42,21 +106,24 @@ Geometry* MeRenderer::addGeometry(void* verts, uint vertexDataSizeBytes,
 	GLuint totalBytesRequired = vertexDataSizeBytes + indexDataBytesRequired;
 	assert(bufferInfo.nextAvailableByteIndex + totalBytesRequired < BufferInfo::MAX_BUFFER_SIZE);
 
+	assert(nextGeometryIndex != MAX_GEOMETRIES);
 	Geometry* ret = geometries + nextGeometryIndex;
 	nextGeometryIndex++;
 
+	ret->buffer = &bufferInfo;
+	ret->numIndices = numIndices;
 	glBindBuffer(GL_ARRAY_BUFFER, bufferInfo.bufferID);
-	ret->vertexDataBufferBufferByteOffset = bufferInfo.nextAvailableByteIndex;
-	glBufferSubData(GL_ARRAY_BUFFER, ret->vertexDataBufferBufferByteOffset,
+	ret->vertexDataBufferByteOffset = bufferInfo.nextAvailableByteIndex;
+	glBufferSubData(GL_ARRAY_BUFFER, ret->vertexDataBufferByteOffset,
 		vertexDataSizeBytes, verts);	
 	bufferInfo.nextAvailableByteIndex += vertexDataSizeBytes;
 
-	ret->indexDataBufferBufferByteOffset = bufferInfo.nextAvailableByteIndex;
-	glBufferSubData(GL_ARRAY_BUFFER, ret->indexDataBufferBufferByteOffset,
+	ret->indexDataBufferByteOffset = bufferInfo.nextAvailableByteIndex;
+	glBufferSubData(GL_ARRAY_BUFFER, ret->indexDataBufferByteOffset,
 		indexDataBytesRequired, indices);
 	bufferInfo.nextAvailableByteIndex += indexDataBytesRequired;
 
-	ret->indexDataBufferBufferByteOffset = bufferInfo.nextAvailableByteIndex;
+	ret->indexDataBufferByteOffset = bufferInfo.nextAvailableByteIndex;
 
 	
 	return ret;
@@ -81,7 +148,7 @@ ShaderProgramInfo* MeRenderer::addShaderProgram(
 	const char* vertexShaderFileName, 
 	const char* fragmentShaderFileName)
 {
-	assert(nextShaderProgramIndex != MAX_SHADER_PROGRAM_INFOS);
+	assert(nextShaderProgramIndex != MAX_GEOMETRIES);
 
 	ShaderProgramInfo* ret = shaderProgramInfos + nextShaderProgramIndex;
 	nextShaderProgramIndex++;
@@ -90,10 +157,10 @@ ShaderProgramInfo* MeRenderer::addShaderProgram(
 	GLuint fragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
 
 	const GLchar* adapter[1];
-	string temp = readShaderCode(vertexShaderFileName);
+	std::string temp = readShaderCode("VertexShaderCode.glsl");//vertexShaderFileName);
 	adapter[0] = temp.c_str();
 	glShaderSource(vertexShaderID, 1, adapter, 0);
-	temp = readShaderCode(fragmentShaderFileName);
+	temp = readShaderCode("FragmentShaderCode.glsl");//fragmentShaderFileName);
 	adapter[0] = temp.c_str();
 	glShaderSource(fragmentShaderID, 1, adapter, 0);
 
@@ -112,8 +179,8 @@ ShaderProgramInfo* MeRenderer::addShaderProgram(
 	if (!checkProgramStatus(ret->programID))
 		goto BADNESSHAPPENED;
 
-	glDeleteShader(vertexShaderID);
-	glDeleteShader(fragmentShaderID);
+//	glDeleteShader(vertexShaderID);
+//	glDeleteShader(fragmentShaderID);
 	//return ShaderInfo();
 
 	return ret;
@@ -178,7 +245,57 @@ std::string MeRenderer::readShaderCode(const char* fileName)
 		std::istreambuf_iterator<char>());
 }
 
+void MeRenderer::mouseMoveEvent(QMouseEvent* e)
+{
+	camera.mouseUpdate(glm::vec2(e->x(), e->y()));
+	std::cout << "got mouse!" << std::endl;
+	repaint();
+}
 
+void MeRenderer::keyPressEvent(QKeyEvent* e)
+{
+	switch (e->key())
+	{
+	case Qt::Key::Key_W:
+		camera.moveForward();
+		break;
+	case Qt::Key::Key_S:
+		camera.moveBackward();
+		break;
+	case Qt::Key::Key_A:
+		camera.strafeLeft();
+		break;
+	case Qt::Key::Key_D:
+		camera.strafeRight();
+		break;
+	case Qt::Key::Key_R:
+		camera.moveUp();
+		break;
+	case Qt::Key::Key_F:
+		camera.moveDown();
+		break;
+	case Qt::Key::Key_Down:
+		lightPosition += glm::vec3(0.0f, 0.0f, 0.2f);
+		break;
+	case Qt::Key::Key_Up:
+		lightPosition += glm::vec3(0.0f, 0.0f, -0.2f);
+		break;
+	case Qt::Key::Key_Left:
+		lightPosition += glm::vec3(-0.2f, 0.0f, 0.0f);
+		break;
+	case Qt::Key::Key_Right:
+		lightPosition += glm::vec3(0.2f, 0.0f, 0.0f);
+		break;
+	case Qt::Key::Key_Q:
+		lightPosition += glm::vec3(0.0f, -0.2f, 0.0f);
+		break;
+	case Qt::Key::Key_E:
+		lightPosition += glm::vec3(0.0f, 0.2f, 0.0f);
+		break;
+	}
+	std::cout << "got key!" << std::endl;
+	repaint();
+}
 
 MeRenderer::~MeRenderer()
 {
