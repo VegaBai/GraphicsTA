@@ -27,12 +27,18 @@ ShapeDataTest ShapeGeneratorTest::makeTriangle()
 	{
 		vec3(+0.0f, +1.0f, +0.0f),
 		vec3(+1.0f, +0.0f, +0.0f),
+		vec3(+0.0f, +0.0f, +1.0f),
+		vec2(0.5f, 1.0f),
 
 		vec3(-1.0f, -1.0f, +0.0f),
 		vec3(+0.0f, +1.0f, +0.0f),
+		vec3(+0.0f, +0.0f, +1.0f),
+		vec2(0.0f, 0.0f),
 
 		vec3(+1.0f, -1.0f, +0.0f),
 		vec3(+0.0f, +0.0f, +1.0f),
+		vec3(+0.0f, +0.0f, +1.0f),
+		vec2(1.0f, 0.0f),
 	};
 	ret.numVertices = NUM_ARRAY_ELEMENTS(myTri);
 	ret.vertices = new VertexTest[ret.numVertices];
@@ -53,80 +59,129 @@ ShapeDataTest ShapeGeneratorTest::makeCube() {
 	{
 		vec3(-1.0f, +1.0f, +1.0f),  // 0
 		vec3(+1.0f, +0.0f, +0.0f),	// Color
-
+		vec3(+0.0f, +1.0f, +0.0f),  // Normal
+		//vec2(0.375f, 0.25f),
+		vec2(+0.0f, +1.0f), // UV
 		vec3(+1.0f, +1.0f, +1.0f),  // 1
 		vec3(+0.0f, +1.0f, +0.0f),	// Color
-
+		vec3(+0.0f, +1.0f, +0.0f),  // Normal
+		//vec2(0.625f, 0.25f),
+		vec2(+1.0f, +1.0f), // UV
 		vec3(+1.0f, +1.0f, -1.0f),  // 2
 		vec3(+0.0f, +0.0f, +1.0f),  // Color
-
+		vec3(+0.0f, +1.0f, +0.0f),  // Normal
+		//vec2(0.625f, 0.5f),
+		vec2(+1.0f, +0.0f), // UV
 		vec3(-1.0f, +1.0f, -1.0f),  // 3
 		vec3(+1.0f, +1.0f, +1.0f),  // Color
-
+		vec3(+0.0f, +1.0f, +0.0f),  // Normal
+		//vec2(0.375f, 0.5f),
+		vec2(+0.0f, +0.0f), // UV
 
 		vec3(-1.0f, +1.0f, -1.0f),  // 4
 		vec3(+1.0f, +0.0f, +1.0f),  // Color
-
+		vec3(+0.0f, +0.0f, -1.0f),  // Normal
+		//vec2(0.375f, 0.5f),
+		vec2(+0.0f, +1.0f), // UV
 		vec3(+1.0f, +1.0f, -1.0f),  // 5
 		vec3(+0.0f, +0.5f, +0.2f),  // Color
-
+		vec3(+0.0f, +0.0f, -1.0f),  // Normal
+		//vec2(0.625f, 0.5f),
+		vec2(+1.0f, +1.0f), // UV
 		vec3(+1.0f, -1.0f, -1.0f),  // 6
 		vec3(+0.8f, +0.6f, +0.4f),  // Color
-
+		vec3(+0.0f, +0.0f, -1.0f),  // Normal
+		//vec2(0.625f, 0.75f),
+		vec2(+1.0f, +0.0f), // UV
 		vec3(-1.0f, -1.0f, -1.0f),  // 7
 		vec3(+0.3f, +1.0f, +0.5f),  // Color
-
+		vec3(+0.0f, +0.0f, -1.0f),  // Normal
+		//vec2(0.375f, 0.75f),
+		vec2(+0.0f, +0.0f), // UV
 
 		vec3(+1.0f, +1.0f, -1.0f),  // 8
 		vec3(+0.2f, +0.5f, +0.2f),  // Color
-
+		vec3(+1.0f, +0.0f, +0.0f),  // Normal
+		//vec2(0.875f, 0.25f),
+		vec2(+1.0f, +0.0f), // UV
 		vec3(+1.0f, +1.0f, +1.0f),  // 9
 		vec3(+0.9f, +0.3f, +0.7f),  // Color
-
+		vec3(+1.0f, +0.0f, +0.0f),  // Normal
+		//vec2(0.625f, 0.25f),
+		vec2(+1.0f, +1.0f), // UV
 		vec3(+1.0f, -1.0f, +1.0f),  // 10
 		vec3(+0.3f, +0.7f, +0.5f),  // Color
-
+		vec3(+1.0f, +0.0f, +0.0f),  // Normal
+		//vec2(0.625f, 0.0f),
+		vec2(+0.0f, +1.0f), // UV
 		vec3(+1.0f, -1.0f, -1.0f),  // 11
 		vec3(+0.5f, +0.7f, +0.5f),  // Color
-
+		vec3(+1.0f, +0.0f, +0.0f),  // Normal
+		//vec2(0.875f, 0.0f),
+		vec2(+0.0f, +0.0f), // UV
 
 		vec3(-1.0f, +1.0f, +1.0f),  // 12
 		vec3(+0.7f, +0.8f, +0.2f),  // Color
-
+		vec3(-1.0f, +0.0f, +0.0f),  // Normal
+		//vec2(0.375f, 0.25f),
+		vec2(+1.0f, +0.0f), // UV
 		vec3(-1.0f, +1.0f, -1.0f),  // 13
 		vec3(+0.5f, +0.7f, +0.3f),  // Color
-
+		vec3(-1.0f, +0.0f, +0.0f),  // Normal
+		//vec2(0.125f, 0.25f),
+		vec2(+0.0f, +0.0f), // UV
 		vec3(-1.0f, -1.0f, -1.0f),  // 14
 		vec3(+0.4f, +0.7f, +0.7f),  // Color
-
+		vec3(-1.0f, +0.0f, +0.0f),  // Normal
+		//vec2(0.125f, 0.0f),
+		vec2(+0.0f, +1.0f), // UV
 		vec3(-1.0f, -1.0f, +1.0f),  // 15
 		vec3(+0.2f, +0.5f, +1.0f),  // Color
-
+		vec3(-1.0f, +0.0f, +0.0f),  // Normal
+		//vec2(0.375f, 0.0f),
+		vec2(+1.0f, +1.0f), // UV
 
 		vec3(+1.0f, +1.0f, +1.0f),  // 16
 		vec3(+0.6f, +1.0f, +0.7f),  // Color
-
+		vec3(+0.0f, +0.0f, +1.0f),  // Normal
+		//vec2(0.625f, 0.25f),
+		vec2(+1.0f, +0.0f), // UV
 		vec3(-1.0f, +1.0f, +1.0f),  // 17
 		vec3(+0.6f, +0.4f, +0.8f),  // Color
-
+		vec3(+0.0f, +0.0f, +1.0f),  // Normal
+		//vec2(0.375f, 0.25f),
+		vec2(+0.0f, +0.0f), // UV
 		vec3(-1.0f, -1.0f, +1.0f),  // 18
 		vec3(+0.2f, +0.8f, +0.7f),  // Color
-
+		vec3(+0.0f, +0.0f, +1.0f),  // Normal
+		//vec2(0.375f, 0.0f),
+		vec2(+0.0f, +1.0f), // UV
 		vec3(+1.0f, -1.0f, +1.0f),  // 19
 		vec3(+0.2f, +0.7f, +1.0f),  // Color
-
+		vec3(+0.0f, +0.0f, +1.0f),  // Normal
+		//vec2(0.625f, 0.0f),
+		vec2(+1.0f, +1.0f), // UV
 
 		vec3(+1.0f, -1.0f, -1.0f),  // 20
 		vec3(+0.8f, +0.3f, +0.7f),  // Color
-
+		vec3(+0.0f, -1.0f, +0.0f),  // Normal
+		//vec2(0.625f, 0.75f),
+		vec2(+1.0f, +1.0f), // UV
 		vec3(-1.0f, -1.0f, -1.0f),  // 21
 		vec3(+0.8f, +0.9f, +0.5f),  // Color
-
+		vec3(+0.0f, -1.0f, +0.0f),  // Normal
+		//vec2(0.375f, 0.75f),
+		vec2(+0.0f, +1.0f), // UV
 		vec3(-1.0f, -1.0f, +1.0f),  // 22
 		vec3(+0.5f, +0.8f, +0.5f),  // Color
-
+		vec3(+0.0f, -1.0f, +0.0f),  // Normal
+		//vec2(0.375f, 1.0f),
+		vec2(+0.0f, +0.0f), // UV
 		vec3(+1.0f, -1.0f, +1.0f),  // 23
 		vec3(+0.9f, +1.0f, +0.2f),  // Color
+		vec3(+0.0f, -1.0f, +0.0f),  // Normal
+		//vec2(0.625f, 1.0f),
+		vec2(+1.0f, +0.0f), // UV
 	};
 
 	ret.numVertices = NUM_ARRAY_ELEMENTS(stackVerts);

@@ -50,13 +50,16 @@ void MeRenderer::paintGL()
 		glBindBuffer(GL_ARRAY_BUFFER, g->buffer->bufferID);
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
-//		glEnableVertexAttribArray(2);
+		glEnableVertexAttribArray(2);
+		glEnableVertexAttribArray(3);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
 			sizeof(VertexTest), (void*)(g->vertexDataBufferByteOffset));
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,
 			sizeof(VertexTest), (void*)(g->vertexDataBufferByteOffset + sizeof(float) * 3));
-//		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE,
-//			sizeof(VertexTest), (void*)(g->vertexDataBufferByteOffset + sizeof(float) * 6));
+		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE,
+			sizeof(VertexTest), (void*)(g->vertexDataBufferByteOffset + sizeof(float) * 6));
+		glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE,
+			sizeof(VertexTest), (void*)(g->vertexDataBufferByteOffset + sizeof(float) * 9));
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g->buffer->bufferID);
 
 		glUseProgram(victim->shaderProgramInfo->programID);
@@ -279,7 +282,7 @@ void MeRenderer::keyPressEvent(QKeyEvent* e)
 		lightPosition += glm::vec3(0.0f, 0.2f, 0.0f);
 		break;
 	}
-	std::cout << "got key!" << std::endl;
+//	std::cout << "got key!" << std::endl;
 	repaint();
 }
 

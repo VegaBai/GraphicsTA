@@ -13,19 +13,11 @@ int main(int argc, char* argv[])
 	ShapeDataTest data = ShapeGeneratorTest::makeCube();
 	renderer.show();
 
-//	Geometry* cubeGeometry = 
-//		renderer.addGeometry(
-//		data.vertices, data.vertexBufferSize(), 
-//		data.indices, data.numIndices, GL_TRIANGLES);
-
 	Geometry* cubeGeometry = 
 		renderer.addGeometry(
 		data.vertices, data.vertexBufferSize(), 
 		data.indices, data.numIndices, GL_TRIANGLES);
 
-//	ShaderProgramInfo* shader = renderer.addShaderProgram(
-//		"VertexShaderCode.glsl", 
-//		"FragmentShaderCode.glsl");
 	ShaderProgramInfo* shader = renderer.addShaderProgram(
 		"VertexShaderTest.glsl",
 		"FragmentShaderTest.glsl");
