@@ -8,6 +8,7 @@
     <ClCompile Include="Renderer\Geometry.cpp" />
     <ClCompile Include="Renderer\MeRenderer.cpp" />
     <ClCompile Include="Renderer\Renderable.cpp" />
+    <ClCompile Include="Test\ShapeGeneratorTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MeGlWindow.h" />
@@ -22,11 +23,16 @@
     <ClInclude Include="Renderer\Renderable.h" />
     <ClInclude Include="Renderer\ShaderProgramInfo.h" />
     <ClInclude Include="Primitives\TeapotData.h" />
+    <ClInclude Include="Test\ShapeGeneratorTest.h" />
+    <ClInclude Include="Test\VertexTest.h" />
+    <ClInclude Include="Test\ShapeDataTest.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FragmentShaderCodeNoLight.glsl" />
     <None Include="VertexShaderCodeNoLight.glsl" />
     <None Include="VertexShaderCode.glsl" />
     <None Include="FragmentShaderCode.glsl" />
+    <None Include="VertexShaderTest.glsl" />
+    <None Include="FragmentShaderTest.glsl" />
   </ItemGroup>
 </Project>

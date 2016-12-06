@@ -153,6 +153,7 @@
     <ClCompile Include="Renderer\Geometry.cpp" />
     <ClCompile Include="Renderer\MeRenderer.cpp" />
     <ClCompile Include="Renderer\Renderable.cpp" />
+    <ClCompile Include="Test\ShapeGeneratorTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
@@ -167,10 +168,15 @@
     <ClInclude Include="Renderer\MeRenderer.h" />
     <ClInclude Include="Renderer\Renderable.h" />
     <ClInclude Include="Renderer\ShaderProgramInfo.h" />
+    <ClInclude Include="Test\ShapeDataTest.h" />
+    <ClInclude Include="Test\ShapeGeneratorTest.h" />
+    <ClInclude Include="Test\VertexTest.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FragmentShaderCode.glsl" />
     <None Include="FragmentShaderCodeNoLight.glsl" />
+    <None Include="FragmentShaderTest.glsl" />
+    <None Include="VertexShaderTest.glsl" />
     <None Include="VertexShaderCode.glsl" />
     <None Include="VertexShaderCodeNoLight.glsl" />
   </ItemGroup>

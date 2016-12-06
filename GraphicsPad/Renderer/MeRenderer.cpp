@@ -8,7 +8,7 @@
 #include <QtGui\qkeyevent>
 #include <glm\gtx\transform.hpp>
 #include <Renderer\MeRenderer.h>
-#include <Primitives\Vertex.h>
+#include <Test\VertexTest.h>
 using std::string;
 
 
@@ -25,6 +25,7 @@ MeRenderer::MeRenderer()
 
 void MeRenderer::initializeGL()
 {
+	setMouseTracking(true);
 	glEnable(GL_DEPTH_TEST);
 //	glEnable(GL_CULL_FACE);
 	glewInit();
@@ -49,40 +50,13 @@ void MeRenderer::paintGL()
 		glBindBuffer(GL_ARRAY_BUFFER, g->buffer->bufferID);
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
-		glEnableVertexAttribArray(2);
-		glEnableVertexAttribArray(3);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
-			sizeof(Vertex), (void*)(g->vertexDataBufferByteOffset));
+			sizeof(float), (void*)(g->vertexDataBufferByteOffset));
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,
-			sizeof(Vertex), (void*)(g->vertexDataBufferByteOffset + sizeof(float) * 3));
-		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE,
-			sizeof(Vertex), (void*)(g->vertexDataBufferByteOffset + sizeof(float) * 6));
-		glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE,
-			sizeof(Vertex), (void*)(g->vertexDataBufferByteOffset + sizeof(float) * 9));
+			sizeof(float), (void*)(g->vertexDataBufferByteOffset + sizeof(float) * 3));
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g->buffer->bufferID);
 
 		glUseProgram(victim->shaderProgramInfo->programID);
-		GLuint mvpLocation = glGetUniformLocation(victim->shaderProgramInfo->programID, "mvp");
-/*
-		// ambient light
-		GLint ambientLightUniformLocation = glGetUniformLocation(victim->shaderProgramInfo->programID, "ambientLight");
-		glm::vec3 ambientLight(0.3f, 0.0f, 0.0f);
-		glUniform3fv(ambientLightUniformLocation, 1, &ambientLight[0]);
-		// diffuse light
-		GLint diffuseLightPositionUniformLocation = glGetUniformLocation(victim->shaderProgramInfo->programID, "diffuseLightPosition");
-		glUniform3fv(diffuseLightPositionUniformLocation, 1, &lightPosition[0]);
-		// for specular
-		GLint eyePositionWorldUniformLocation = glGetUniformLocation(victim->shaderProgramInfo->programID, "eyePositionWorld");
-		glm::vec3 eyePosition = camera.getPosition();
-		glUniform3fv(eyePositionWorldUniformLocation, 1, &eyePosition[0]);
-		GLint modelToWorldUniformTransform = glGetUniformLocation(victim->shaderProgramInfo->programID, "modelToWorldTransform");
-		glUniformMatrix4fv(modelToWorldUniformTransform, 1, GL_FALSE, &victim->modelToWorld[0][0]);
-*/
-//		if (mvpLocation != -1)
-//		{
-			glm::mat4 mvp = worldToProjection * victim->modelToWorld;
-			glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, &mvp[0][0]);
-//		}
 
 		glDrawElements(GL_TRIANGLES, victim->geometry->numIndices, GL_UNSIGNED_SHORT, 
 			(void*)(victim->geometry->indexDataBufferByteOffset));
@@ -123,7 +97,7 @@ Geometry* MeRenderer::addGeometry(void* verts, uint vertexDataSizeBytes,
 		indexDataBytesRequired, indices);
 	bufferInfo.nextAvailableByteIndex += indexDataBytesRequired;
 
-	ret->indexDataBufferByteOffset = bufferInfo.nextAvailableByteIndex;
+//	ret->indexDataBufferByteOffset = bufferInfo.nextAvailableByteIndex;
 
 	
 	return ret;
@@ -157,10 +131,10 @@ ShaderProgramInfo* MeRenderer::addShaderProgram(
 	GLuint fragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
 
 	const GLchar* adapter[1];
-	std::string temp = readShaderCode("VertexShaderCode.glsl");//vertexShaderFileName);
+	std::string temp = readShaderCode("VertexShaderTest.glsl");//vertexShaderFileName);
 	adapter[0] = temp.c_str();
 	glShaderSource(vertexShaderID, 1, adapter, 0);
-	temp = readShaderCode("FragmentShaderCode.glsl");//fragmentShaderFileName);
+	temp = readShaderCode("FragmentShaderTest.glsl");//fragmentShaderFileName);
 	adapter[0] = temp.c_str();
 	glShaderSource(fragmentShaderID, 1, adapter, 0);
 
@@ -248,7 +222,7 @@ std::string MeRenderer::readShaderCode(const char* fileName)
 void MeRenderer::mouseMoveEvent(QMouseEvent* e)
 {
 	camera.mouseUpdate(glm::vec2(e->x(), e->y()));
-	std::cout << "got mouse!" << std::endl;
+//	std::cout << "got mouse!" << std::endl;
 	repaint();
 }
 
