@@ -38,5 +38,6 @@ public:
 	static ShapeData makeSphere(uint tesselation = 20);
 	static ShapeData makeTorus(uint tesselation = 20);
 	static ShapeData generateNormals(const ShapeData& data);
+	void cleanUp();
 };
 

@@ -13,6 +13,7 @@ uniform vec3 eyePositionWorld;
 
 uniform sampler2D Tex1;
 uniform sampler2D Normal1;
+uniform sampler2D Spec1;
 
 void main()
 {
@@ -38,18 +39,22 @@ void main()
 		normalWorldFinal*= vec3(1.0f, 1.0f, -1.0f);
 	}  
 
+	//****************************
+	normalWorldFinal = normalWorld;
 	// diffuse light calculation
 	vec3 lightVectorWorld = normalize(diffuseLightPosition - vertexWorld);
 	float diffuseIntensity = dot(lightVectorWorld, normalWorldFinal);
 //	diffuseIntensity = clamp(diffuseIntensity, 0.0, 1.0);
 	vec3 diffuse = vec3(0.0, diffuseIntensity, 0.0);	
-
+		
 	// specular light calculation
 	vec3 reflectedLightVectorWorld = reflect(-lightVectorWorld, normalWorldFinal);
 	vec3 eyeVectorWorld = normalize(eyePositionWorld - vertexWorld);
 	float specularity = dot(reflectedLightVectorWorld, eyeVectorWorld);
-	specularity = pow(specularity, 50);
-	vec3 specularLight = vec3(0.0, 0.0, specularity);
+	specularity = pow(specularity, 80);
+	vec3 specMap = vec3(texture(Spec1, v_uvPosition));
+	vec3 specIntense = vec3(0.0, 0.0, specularity);
+	vec3 specularLight = specMap * specIntense;
 
 	// attenuation
 	float d = length(diffuseLightPosition - vertexWorld);
@@ -57,13 +62,14 @@ void main()
 	float k2 = 0.1;
 	float k3 = 0.05;
 
-	vec3 diffSpec = clamp(diffuse, 0.0, 1.0);
-	diffSpec = diffSpec * (1.0/(k1 + k2*d + k3*d*d));
-	vec4 theColor = vec4((ambientLight + diffSpec), 1.0);
+	vec3 diffAtten = clamp(diffuse, 0.0, 1.0);
+	diffAtten = diffAtten * (1.0/(k1 + k2*d + k3*d*d));
+	vec4 theColor = vec4((ambientLight + diffAtten + specularLight), 1.0);
 
 	daColor = texture(Tex1, v_uvPosition);
 
-	daColor = daColor * theColor;
+//	daColor = daColor * theColor;
 //	daColor = vec4(normalWorldFinal, 1.0f);
-//	daColor = theColor;
+	daColor = theColor;
+//	daColor = vec4(specularLight, 1.0f);
 }

@@ -57,6 +57,9 @@ QImage myImg2;
 GLuint myNormalObjectId;
 const char* normalName1 = "Shapes.png";
 QImage myNormal1;
+GLuint mySpecObjectId;
+const char* specName = "brickspec.png";
+QImage mySpec1;
 
 void MeGlWindow::sendDataToOpenGL()
 {
@@ -211,6 +214,7 @@ void MeGlWindow::sendDataToOpenGL()
 	myImg = QGLWidget::convertToGLFormat(QImage(texName, "PNG"));
 	myImg2 = QGLWidget::convertToGLFormat(QImage(texName2, "PNG"));
 	myNormal1 = QGLWidget::convertToGLFormat(QImage(normalName1, "PNG"));
+	mySpec1 = QGLWidget::convertToGLFormat(QImage(specName, "PNG"));
 
 	glActiveTexture(GL_TEXTURE0);
 	
@@ -234,7 +238,12 @@ void MeGlWindow::sendDataToOpenGL()
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-	
+	glActiveTexture(GL_TEXTURE3);
+	glGenTextures(1, &mySpecObjectId);
+	glBindTexture(GL_TEXTURE_2D, mySpecObjectId);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, mySpec1.width(), mySpec1.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, mySpec1.bits());
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);	
 }
 
 void MeGlWindow::paintGL()
@@ -278,6 +287,9 @@ void MeGlWindow::paintGL()
 
 	int locN = glGetUniformLocation(programID, "Normal1");
 	if (locN >= 0) glUniform1i(locN, 2);
+
+	int locSpec = glGetUniformLocation(programID, "Spec1");
+	if (locSpec >= 0) glUniform1i(locSpec, 3);
 
 	// plane
 	glBindVertexArray(planeVertexArrayObjectID);
