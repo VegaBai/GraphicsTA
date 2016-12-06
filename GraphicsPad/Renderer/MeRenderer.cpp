@@ -50,11 +50,23 @@ void MeRenderer::paintGL()
 		glBindBuffer(GL_ARRAY_BUFFER, g->buffer->bufferID);
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
+//		glEnableVertexAttribArray(2);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
-			sizeof(float), (void*)(g->vertexDataBufferByteOffset));
+			sizeof(VertexTest), (void*)(g->vertexDataBufferByteOffset));
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,
-			sizeof(float), (void*)(g->vertexDataBufferByteOffset + sizeof(float) * 3));
+			sizeof(VertexTest), (void*)(g->vertexDataBufferByteOffset + sizeof(float) * 3));
+//		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE,
+//			sizeof(VertexTest), (void*)(g->vertexDataBufferByteOffset + sizeof(float) * 6));
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g->buffer->bufferID);
+
+		glUseProgram(victim->shaderProgramInfo->programID);
+		GLuint mvpLocation = glGetUniformLocation(victim->shaderProgramInfo->programID, "mvp");
+
+		if (mvpLocation != -1)
+		{
+			glm::mat4 mvp = worldToProjection * victim->modelToWorld;
+			glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, &mvp[0][0]);
+		}
 
 		glUseProgram(victim->shaderProgramInfo->programID);
 

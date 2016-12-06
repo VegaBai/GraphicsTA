@@ -10,7 +10,7 @@ int main(int argc, char* argv[])
 
 	QApplication app(argc, argv);
 //	ShapeData data = ShapeGenerator::makeCube();
-	ShapeDataTest data = ShapeGeneratorTest::makeTriangle();
+	ShapeDataTest data = ShapeGeneratorTest::makeCube();
 	renderer.show();
 
 //	Geometry* cubeGeometry = 
@@ -18,7 +18,7 @@ int main(int argc, char* argv[])
 //		data.vertices, data.vertexBufferSize(), 
 //		data.indices, data.numIndices, GL_TRIANGLES);
 
-	Geometry* triGeometry = 
+	Geometry* cubeGeometry = 
 		renderer.addGeometry(
 		data.vertices, data.vertexBufferSize(), 
 		data.indices, data.numIndices, GL_TRIANGLES);
@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
 		"VertexShaderTest.glsl",
 		"FragmentShaderTest.glsl");
 
-	Renderable* cubeRenderable1 = renderer.addRenderable(triGeometry, 
+	Renderable* cubeRenderable1 = renderer.addRenderable(cubeGeometry,
 		glm::mat4(), shader);
 //	Renderable* cubeRenderable2 = renderer.addRenderable(cubeGeometry,
 //		glm::translate(-2.0f, 0.0f, 0.0f), shader);
