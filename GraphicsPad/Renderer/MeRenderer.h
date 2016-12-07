@@ -46,9 +46,19 @@ class MeRenderer : public QGLWidget
 	~MeRenderer();
 
 	glm::vec3 lightPosition = glm::vec3(-2.0f, 2.0f, -3.0f);
-	GLuint myNormalObjectId;
+		
+	const char* texName = "unityChan.png";
+	QImage myImg;
+	GLuint myTextureObjectId;
 	const char* normalName1 = "Shapes.png";
 	QImage myNormal1;
+	GLuint myNormalObjectId;	
+	const char* specName = "brickspec.png";
+	QImage mySpec;
+	GLuint mySpecObjectId;
+	const char* alphaName = "brickspec.png";
+	QImage myAlpha;
+	GLuint myAlphaObjectId;
 
 protected:
 	void initializeGL();

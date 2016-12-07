@@ -8,7 +8,7 @@
 #include <QtGui\qkeyevent>
 #include <glm\gtx\transform.hpp>
 #include <Renderer\MeRenderer.h>
-#include <Test\VertexTest.h>
+#include <Primitives\Vertex.h>
 using std::string;
 
 
@@ -29,7 +29,8 @@ void MeRenderer::initializeGL()
 {
 	setMouseTracking(true);
 	glEnable(GL_DEPTH_TEST);
-//	glEnable(GL_CULL_FACE);
+	glEnable(GL_CULL_FACE);
+	glEnable(GL_BLEND);
 	glewInit();
 	initializeBuffer();	
 }
@@ -44,6 +45,8 @@ void MeRenderer::paintGL()
 		glm::perspective(60.0f, ((float)width())/height(), 0.01f, 20.0f) * 
 		camera.getWorldToViewMatrix();
 
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	for (GLuint i = 0; i < nextRenderableIndex; i++)
 	{
 		const Renderable* victim = renderables + i;
@@ -55,13 +58,13 @@ void MeRenderer::paintGL()
 		glEnableVertexAttribArray(2);
 		glEnableVertexAttribArray(3);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
-			sizeof(VertexTest), (void*)(g->vertexDataBufferByteOffset));
+			sizeof(Vertex), (void*)(g->vertexDataBufferByteOffset));
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,
-			sizeof(VertexTest), (void*)(g->vertexDataBufferByteOffset + sizeof(float) * 3));
+			sizeof(Vertex), (void*)(g->vertexDataBufferByteOffset + sizeof(float) * 3));
 		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE,
-			sizeof(VertexTest), (void*)(g->vertexDataBufferByteOffset + sizeof(float) * 6));
+			sizeof(Vertex), (void*)(g->vertexDataBufferByteOffset + sizeof(float) * 6));
 		glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE,
-			sizeof(VertexTest), (void*)(g->vertexDataBufferByteOffset + sizeof(float) * 9));
+			sizeof(Vertex), (void*)(g->vertexDataBufferByteOffset + sizeof(float) * 9));
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g->buffer->bufferID);
 
 		
@@ -75,8 +78,14 @@ void MeRenderer::paintGL()
 			glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, &mvp[0][0]);
 		}
 
+		int locTex = glGetUniformLocation(victim->shaderProgramInfo->programID, "Tex1");
+		if (locTex >= 0) glUniform1i(locTex, 0);
 		int locN = glGetUniformLocation(victim->shaderProgramInfo->programID, "Normal1");
-		if (locN >= 0) glUniform1i(locN, 0);
+		if (locN >= 0) glUniform1i(locN, 1);
+		int locSpec = glGetUniformLocation(victim->shaderProgramInfo->programID, "Spec1");
+		if (locSpec >= 0) glUniform1i(locSpec, 2);
+		int locAlpha = glGetUniformLocation(victim->shaderProgramInfo->programID, "Alpha1");
+		if (locAlpha >= 0) glUniform1i(locAlpha, 3);
 
 		// ambient light
 		GLint ambientLightUniformLocation = glGetUniformLocation(victim->shaderProgramInfo->programID, "ambientLight");
@@ -108,11 +117,35 @@ void MeRenderer::initializeBuffer()
 	glBindBuffer(GL_ARRAY_BUFFER, bufferInfo.bufferID);
 	glBufferData(GL_ARRAY_BUFFER, BufferInfo::MAX_BUFFER_SIZE, 0, GL_DYNAMIC_DRAW);
 
-	myNormal1 = QGLWidget::convertToGLFormat(QImage(normalName1, "PNG"));
+	myImg = QGLWidget::convertToGLFormat(QImage(texName, "PNG"));
 	glActiveTexture(GL_TEXTURE0);
+	glGenTextures(1, &myTextureObjectId);
+	glBindTexture(GL_TEXTURE_2D, myTextureObjectId);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, myImg.width(), myImg.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, myImg.bits());
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+	myNormal1 = QGLWidget::convertToGLFormat(QImage(normalName1, "PNG"));
+	glActiveTexture(GL_TEXTURE1);
 	glGenTextures(1, &myNormalObjectId);
 	glBindTexture(GL_TEXTURE_2D, myNormalObjectId);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, myNormal1.width(), myNormal1.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, myNormal1.bits());
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+	mySpec = QGLWidget::convertToGLFormat(QImage(specName, "PNG"));
+	glActiveTexture(GL_TEXTURE2);
+	glGenTextures(1, &mySpecObjectId);
+	glBindTexture(GL_TEXTURE_2D, mySpecObjectId);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, mySpec.width(), mySpec.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, mySpec.bits());
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+	myAlpha = QGLWidget::convertToGLFormat(QImage(alphaName, "PNG"));
+	glActiveTexture(GL_TEXTURE3);
+	glGenTextures(1, &myAlphaObjectId);
+	glBindTexture(GL_TEXTURE_2D, myAlphaObjectId);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, myAlpha.width(), myAlpha.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, myAlpha.bits());
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 }
@@ -176,10 +209,10 @@ ShaderProgramInfo* MeRenderer::addShaderProgram(
 	GLuint fragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
 
 	const GLchar* adapter[1];
-	std::string temp = readShaderCode("VertexShaderTest.glsl");//vertexShaderFileName);
+	std::string temp = readShaderCode(vertexShaderFileName);
 	adapter[0] = temp.c_str();
 	glShaderSource(vertexShaderID, 1, adapter, 0);
-	temp = readShaderCode("FragmentShaderTest.glsl");//fragmentShaderFileName);
+	temp = readShaderCode(fragmentShaderFileName);
 	adapter[0] = temp.c_str();
 	glShaderSource(fragmentShaderID, 1, adapter, 0);
 
