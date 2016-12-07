@@ -71,6 +71,21 @@ void MeRenderer::paintGL()
 			glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, &mvp[0][0]);
 		}
 
+		// ambient light
+		GLint ambientLightUniformLocation = glGetUniformLocation(victim->shaderProgramInfo->programID, "ambientLight");
+		glm::vec3 ambientLight(0.3f, 0.0f, 0.0f);
+		glUniform3fv(ambientLightUniformLocation, 1, &ambientLight[0]);
+		// diffuse light
+		GLint diffuseLightPositionUniformLocation = glGetUniformLocation(victim->shaderProgramInfo->programID, "diffuseLightPosition");
+		glUniform3fv(diffuseLightPositionUniformLocation, 1, &lightPosition[0]);
+		// for specular
+		GLint eyePositionWorldUniformLocation = glGetUniformLocation(victim->shaderProgramInfo->programID, "eyePositionWorld");
+		glm::vec3 eyePosition = camera.getPosition();
+		glUniform3fv(eyePositionWorldUniformLocation, 1, &eyePosition[0]);
+
+		GLint modelToWorldUniformTransform = glGetUniformLocation(victim->shaderProgramInfo->programID, "modelToWorldTransform");
+		glUniformMatrix4fv(modelToWorldUniformTransform, 1, GL_FALSE, &victim->modelToWorld[0][0]);
+
 		glUseProgram(victim->shaderProgramInfo->programID);
 
 		glDrawElements(GL_TRIANGLES, victim->geometry->numIndices, GL_UNSIGNED_SHORT, 
