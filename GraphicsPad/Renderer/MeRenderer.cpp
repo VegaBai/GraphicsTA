@@ -21,6 +21,8 @@ MeRenderer::MeRenderer()
 	nextGeometryIndex = 0;
 	nextRenderableIndex = 0;
 	nextShaderProgramIndex = 0;
+
+//	myNormal1 = QGLWidget::convertToGLFormat(QImage(normalName1, "PNG"));
 }
 
 void MeRenderer::initializeGL()
@@ -62,6 +64,8 @@ void MeRenderer::paintGL()
 			sizeof(VertexTest), (void*)(g->vertexDataBufferByteOffset + sizeof(float) * 9));
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g->buffer->bufferID);
 
+		
+
 		glUseProgram(victim->shaderProgramInfo->programID);
 		GLuint mvpLocation = glGetUniformLocation(victim->shaderProgramInfo->programID, "mvp");
 
@@ -70,6 +74,9 @@ void MeRenderer::paintGL()
 			glm::mat4 mvp = worldToProjection * victim->modelToWorld;
 			glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, &mvp[0][0]);
 		}
+
+		int locN = glGetUniformLocation(victim->shaderProgramInfo->programID, "Normal1");
+		if (locN >= 0) glUniform1i(locN, 0);
 
 		// ambient light
 		GLint ambientLightUniformLocation = glGetUniformLocation(victim->shaderProgramInfo->programID, "ambientLight");
@@ -100,6 +107,14 @@ void MeRenderer::initializeBuffer()
 	glGenBuffers(1, &bufferInfo.bufferID);
 	glBindBuffer(GL_ARRAY_BUFFER, bufferInfo.bufferID);
 	glBufferData(GL_ARRAY_BUFFER, BufferInfo::MAX_BUFFER_SIZE, 0, GL_DYNAMIC_DRAW);
+
+	myNormal1 = QGLWidget::convertToGLFormat(QImage(normalName1, "PNG"));
+	glActiveTexture(GL_TEXTURE0);
+	glGenTextures(1, &myNormalObjectId);
+	glBindTexture(GL_TEXTURE_2D, myNormalObjectId);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, myNormal1.width(), myNormal1.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, myNormal1.bits());
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 }
 
 Geometry* MeRenderer::addGeometry(void* verts, uint vertexDataSizeBytes,

@@ -46,6 +46,9 @@ class MeRenderer : public QGLWidget
 	~MeRenderer();
 
 	glm::vec3 lightPosition = glm::vec3(-2.0f, 2.0f, -3.0f);
+	GLuint myNormalObjectId;
+	const char* normalName1 = "Shapes.png";
+	QImage myNormal1;
 
 protected:
 	void initializeGL();

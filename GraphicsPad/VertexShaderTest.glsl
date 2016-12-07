@@ -8,6 +8,7 @@ in layout(location=3) vec2 uvPosition;
 out vec3 theColor;
 out vec3 v_position;
 out vec3 v_normal;
+out vec2 v_uvPosition;
 
 uniform mat4 mvp;	// model to view matrix
 
@@ -19,4 +20,5 @@ void main()
 
 	v_position = position;
 	v_normal = normal;
+	v_uvPosition = uvPosition;
 }
