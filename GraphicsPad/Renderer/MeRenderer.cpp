@@ -78,14 +78,52 @@ void MeRenderer::paintGL()
 			glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, &mvp[0][0]);
 		}
 
+ //   	QImage myImg;
+    	GLuint myTextureObjectId;
+//    	QImage myNormal;
+//    	GLuint myNormalObjectId;
+//    	QImage mySpec;
+//    	GLuint mySpecObjectId;
+//    	QImage myAlpha;
+//    	GLuint myAlphaObjectId;
+		
+//		myImg = (victim->myTex)[0];
+//		glActiveTexture(GL_TEXTURE0);
+//		glGenTextures(1, &myTextureObjectId);
+//		glBindTexture(GL_TEXTURE_2D, myTextureObjectId);
+//		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (victim->myTex)[0].width(), (victim->myTex)[0].height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, (victim->myTex)[0].bits());
+//		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+//		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+//
+//		glActiveTexture(GL_TEXTURE1);
+//		glGenTextures(1, &myAlphaObjectId);
+//		glBindTexture(GL_TEXTURE_2D, myAlphaObjectId);
+//		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, victim->myAlpha.width(), victim->myAlpha.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, victim->myAlpha.bits());
+//		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+//		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+//
+//		glActiveTexture(GL_TEXTURE2);
+//		glGenTextures(1, &myNormalObjectId);
+//		glBindTexture(GL_TEXTURE_2D, myNormalObjectId);
+//		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, victim->myNormal.width(), victim->myNormal.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, victim->myNormal.bits());
+//		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+//		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+//
+//		glActiveTexture(GL_TEXTURE3);
+//		glGenTextures(1, &mySpecObjectId);
+//		glBindTexture(GL_TEXTURE_2D, mySpecObjectId);
+//		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, victim->mySpec.width(), victim->mySpec.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, victim->mySpec.bits());
+//		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+//		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+//
 		int locTex = glGetUniformLocation(victim->shaderProgramInfo->programID, "Tex1");
 		if (locTex >= 0) glUniform1i(locTex, 0);
-		int locN = glGetUniformLocation(victim->shaderProgramInfo->programID, "Normal1");
-		if (locN >= 0) glUniform1i(locN, 1);
-		int locSpec = glGetUniformLocation(victim->shaderProgramInfo->programID, "Spec1");
-		if (locSpec >= 0) glUniform1i(locSpec, 2);
 		int locAlpha = glGetUniformLocation(victim->shaderProgramInfo->programID, "Alpha1");
-		if (locAlpha >= 0) glUniform1i(locAlpha, 3);
+		if (locAlpha >= 0) glUniform1i(locAlpha, 1);
+		int locN = glGetUniformLocation(victim->shaderProgramInfo->programID, "Normal1");
+		if (locN >= 0) glUniform1i(locN, 2);
+		int locSpec = glGetUniformLocation(victim->shaderProgramInfo->programID, "Spec1");
+		if (locSpec >= 0) glUniform1i(locSpec, 3);		
 
 		// ambient light
 		GLint ambientLightUniformLocation = glGetUniformLocation(victim->shaderProgramInfo->programID, "ambientLight");
@@ -116,38 +154,6 @@ void MeRenderer::initializeBuffer()
 	glGenBuffers(1, &bufferInfo.bufferID);
 	glBindBuffer(GL_ARRAY_BUFFER, bufferInfo.bufferID);
 	glBufferData(GL_ARRAY_BUFFER, BufferInfo::MAX_BUFFER_SIZE, 0, GL_DYNAMIC_DRAW);
-
-	myImg = QGLWidget::convertToGLFormat(QImage(texName, "PNG"));
-	glActiveTexture(GL_TEXTURE0);
-	glGenTextures(1, &myTextureObjectId);
-	glBindTexture(GL_TEXTURE_2D, myTextureObjectId);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, myImg.width(), myImg.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, myImg.bits());
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-	myNormal1 = QGLWidget::convertToGLFormat(QImage(normalName1, "PNG"));
-	glActiveTexture(GL_TEXTURE1);
-	glGenTextures(1, &myNormalObjectId);
-	glBindTexture(GL_TEXTURE_2D, myNormalObjectId);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, myNormal1.width(), myNormal1.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, myNormal1.bits());
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-	mySpec = QGLWidget::convertToGLFormat(QImage(specName, "PNG"));
-	glActiveTexture(GL_TEXTURE2);
-	glGenTextures(1, &mySpecObjectId);
-	glBindTexture(GL_TEXTURE_2D, mySpecObjectId);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, mySpec.width(), mySpec.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, mySpec.bits());
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-	myAlpha = QGLWidget::convertToGLFormat(QImage(alphaName, "PNG"));
-	glActiveTexture(GL_TEXTURE3);
-	glGenTextures(1, &myAlphaObjectId);
-	glBindTexture(GL_TEXTURE_2D, myAlphaObjectId);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, myAlpha.width(), myAlpha.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, myAlpha.bits());
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 }
 
 Geometry* MeRenderer::addGeometry(void* verts, uint vertexDataSizeBytes,
@@ -183,7 +189,12 @@ Geometry* MeRenderer::addGeometry(void* verts, uint vertexDataSizeBytes,
 Renderable * MeRenderer::addRenderable(
 	const Geometry* what, 
 	const glm::mat4& where, 
-	const ShaderProgramInfo* how)
+	const ShaderProgramInfo* how,
+	const char* texName,
+	const char* alphaName, 
+	const char* normalName, 
+	const char* specName)//, 
+//	const char* aoName )
 {
 	assert(nextRenderableIndex != MAX_RENDERABLES);
 	Renderable* ret = renderables + nextRenderableIndex;
@@ -192,6 +203,66 @@ Renderable * MeRenderer::addRenderable(
 	ret->geometry = what;
 	ret->modelToWorld = where;
 	ret->shaderProgramInfo = how;
+
+//	QImage myImg;
+//	GLuint myTextureObjectId;
+////	QImage myNormal;
+//	GLuint myNormalObjectId;
+////	QImage mySpec;
+//	GLuint mySpecObjectId;
+////	QImage myAlpha;
+//	GLuint myAlphaObjectId;
+
+	QImage myImg;
+	GLuint myTextureObjectId;
+	QImage myNormal;
+	GLuint myNormalObjectId;
+	QImage mySpec;
+	GLuint mySpecObjectId;
+	QImage myAlpha;
+	GLuint myAlphaObjectId;
+
+	myImg = QGLWidget::convertToGLFormat(QImage(texName, "PNG"));
+//	ret->myTex = &myImg;
+	glActiveTexture(GL_TEXTURE0);
+	glGenTextures(1, &myTextureObjectId);
+	glBindTexture(GL_TEXTURE_2D, myTextureObjectId);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, myImg.width(), myImg.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, myImg.bits());
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+	myAlpha = QGLWidget::convertToGLFormat(QImage(alphaName, "PNG"));
+	glActiveTexture(GL_TEXTURE1);
+	glGenTextures(1, &myAlphaObjectId);
+	glBindTexture(GL_TEXTURE_2D, myAlphaObjectId);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, myAlpha.width(), myAlpha.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, myAlpha.bits());
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+	myNormal = QGLWidget::convertToGLFormat(QImage(normalName, "PNG"));
+	glActiveTexture(GL_TEXTURE2);
+	glGenTextures(1, &myNormalObjectId);
+	glBindTexture(GL_TEXTURE_2D, myNormalObjectId);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, myNormal.width(), myNormal.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, myNormal.bits());
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+	mySpec = QGLWidget::convertToGLFormat(QImage(specName, "PNG"));
+	glActiveTexture(GL_TEXTURE3);
+	glGenTextures(1, &mySpecObjectId);
+	glBindTexture(GL_TEXTURE_2D, mySpecObjectId);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, mySpec.width(), mySpec.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, mySpec.bits());
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+//	int locTex = glGetUniformLocation(ret->shaderProgramInfo->programID, "Tex1");
+//	if (locTex >= 0) glUniform1i(locTex, 0);
+//	int locAlpha = glGetUniformLocation(ret->shaderProgramInfo->programID, "Alpha1");
+//	if (locAlpha >= 0) glUniform1i(locAlpha, 1);
+//	int locN = glGetUniformLocation(ret->shaderProgramInfo->programID, "Normal1");
+//	if (locN >= 0) glUniform1i(locN, 2);
+//	int locSpec = glGetUniformLocation(ret->shaderProgramInfo->programID, "Spec1");
+//	if (locSpec >= 0) glUniform1i(locSpec, 3);			
 
 	return ret;
 }

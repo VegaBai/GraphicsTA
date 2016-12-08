@@ -67,9 +67,9 @@ void main()
 	vec3 lightColor = ambientLight + diffAttn + specularLight;
 
 	// texture
-	vec3 texColor = vec3(texture(Tex1, v_uvPosition));
+	vec4 texColor = texture(Tex1, v_uvPosition);
 
 //	daColor = vec4(0.0f, 0.0f, 1.0f, 1.0f);	
-	daColor = vec4(texColor * lightColor, 0.5f);
+	daColor = vec4(texColor * (lightColor, 1.0f));
 //	daColor = vec4(vec3(texture(Normal1, v_uvPosition)), 0.5f);
 }

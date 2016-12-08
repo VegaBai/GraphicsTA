@@ -37,6 +37,7 @@ public:
 	static ShapeData makeTeapot(uint tesselation = 10, const glm::mat4& lidTransform = glm::mat4());
 	static ShapeData makeSphere(uint tesselation = 20);
 	static ShapeData makeTorus(uint tesselation = 20);
+	static ShapeData makeOgre();
 	static ShapeData generateNormals(const ShapeData& data);
 };
 

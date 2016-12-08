@@ -3,6 +3,8 @@
 #include <glm\gtc\matrix_transform.hpp>
 #include <Primitives\Vertex.h>
 #include <Primitives\ShapeData.h>
+#include <fstream>
+#include <Qt\qdebug.h>
 #define PI 3.14159265359
 using glm::vec2;
 using glm::vec3;
@@ -857,3 +859,65 @@ ShapeData ShapeGenerator::generateNormals(const ShapeData& data)
 		ret.indices[i] = i;
 	return ret;
 }
+/*
+ShapeData ShapeGenerator::makeOgre()
+{
+	ShapeData ret;
+	ret = loadBinarizedObjFile("Ogre.obj");
+	return ret;
+}
+
+ShapeData loadBinarizedObjFile(const char* filename)
+{
+	std::ifstream in(filename, std::ios::binary | std::ios::in);
+	if (!in.good())
+		qDebug() << "Can't locate binary file: " << filename;
+
+	ShapeData ret;
+
+	in.seekg(0, std::ios::end);
+	size_t filesize = in.tellg();
+	in.seekg(0);
+
+	char* buf = new char[filesize];
+	in.read(buf, filesize);
+	in.close();
+
+	int* numVertsPtr = reinterpret_cast<int*>(buf);
+	int* numIndicesPtr = reinterpret_cast<int*>(buf + sizeof(int));
+
+	size_t fileHeaderSize = sizeof(int) * 2;
+	size_t vertexByteSize = sizeof(Vertex) * (*numVertsPtr);
+
+	VertexPNUT* verts = reinterpret_cast<VertexPNUT*>(buf + fileHeaderSize);
+	ushort* indices = reinterpret_cast<ushort*>(buf + fileHeaderSize + vertexByteSize);
+
+	ret.vertices = verts;
+	ret.indices = indices;
+	ret.numVertices = *numVertsPtr;
+	ret.numIndices = *numIndicesPtr;
+	ret.underlyingBuffer = buf;
+	return overrideColorWithTanNormals(ret);
+}
+
+void ShapeData::cleanUp()
+{
+	if (underlyingBuffer != 0)
+	{
+		delete[] underlyingBuffer;
+	}
+	else
+	{
+		delete[] vertices;
+		delete[] indices;
+	}
+	if (textureFileName != NULL)
+	{
+		delete[] textureFileName;
+		textureFileName = 0;
+	}
+	numVertices = numIndices = 0;
+	vertices = 0;
+	indices = 0;
+}
+*/

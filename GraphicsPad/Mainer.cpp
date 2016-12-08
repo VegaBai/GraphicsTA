@@ -10,20 +10,20 @@ int main(int argc, char* argv[])
 
 	QApplication app(argc, argv);
 
-	ShapeData cubeData = ShapeGenerator::makeCube();
 	ShapeData planeData = ShapeGenerator::makePlane();
+	ShapeData cubeData = ShapeGenerator::makeCube();	
 	ShapeData teapotData = ShapeGenerator::makeTeapot();
 	ShapeData sphereData = ShapeGenerator::makeSphere();
 	renderer.show();
 
-	Geometry* cubeGeometry = 
-		renderer.addGeometry(
-		cubeData.vertices, cubeData.vertexBufferSize(),
-		cubeData.indices, cubeData.numIndices, GL_TRIANGLES);
 	Geometry* planeGeometry =
 		renderer.addGeometry(
 			planeData.vertices, planeData.vertexBufferSize(),
 			planeData.indices, planeData.numIndices, GL_TRIANGLES);
+	Geometry* cubeGeometry = 
+		renderer.addGeometry(
+		cubeData.vertices, cubeData.vertexBufferSize(),
+		cubeData.indices, cubeData.numIndices, GL_TRIANGLES);	
 	Geometry* teapotGeometry =
 		renderer.addGeometry(
 			teapotData.vertices, teapotData.vertexBufferSize(),
@@ -42,16 +42,18 @@ int main(int argc, char* argv[])
 //		"FragmentShaderCodeNoLight.glsl"
 //	);
 
+	Renderable* planeRenderable1 = renderer.addRenderable(planeGeometry,
+		glm::translate(0.0f, -3.0f, -5.0f), shader,
+		"1.png");
 	Renderable* cubeRenderable1 = renderer.addRenderable(cubeGeometry,
 		glm::translate(-2.0f, -1.0f, -2.0f)*glm::scale(0.4f, 0.4f, 0.4f), shader);
 //	Renderable* cubeRenderable2 = renderer.addRenderable(cubeGeometry,
-//		glm::translate(-2.0f, 0.0f, 0.0f), shader);
-	Renderable* planeRenderable1 = renderer.addRenderable(planeGeometry,
-		glm::translate(0.0f, -3.0f, -5.0f), shader);
+//		glm::translate(-2.0f, 0.0f, 0.0f), shader);	
 	Renderable* teapotRenderable1 = renderer.addRenderable(teapotGeometry,
 		glm::translate(1.0f, -1.5f, -2.0f)*glm::rotate(-90.0f, glm::vec3(1.0f, 0.0f, 0.0f))*glm::scale(0.1f, 0.1f, 0.1f), shader);
 	Renderable* sphereRenderable1 = renderer.addRenderable(sphereGeometry,
-		glm::translate(0.0f, 0.0f, -1.6f)*glm::scale(0.2f, 0.2f, 0.2f), shader);
+		glm::translate(0.0f, 0.0f, -1.6f)*glm::scale(0.2f, 0.2f, 0.2f), shader,
+		"unityChanTrans.png");
 //	Renderable* cubeLight = renderer.addRenderable(cubeGeometry,
 //		glm::scale(0.2f, 0.2f, 0.2f), shaderLight);
 	return app.exec();
