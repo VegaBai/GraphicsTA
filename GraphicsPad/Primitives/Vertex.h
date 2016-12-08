@@ -9,3 +9,10 @@ struct Vertex
 	glm::vec2 uvPosition;
 //	glm::vec3 normalTangent;
 };
+
+struct VertexPNUT {
+	glm::vec3 position;
+	glm::vec3 normal;
+	glm::vec2 uv;
+	glm::vec4 tangent;
+};

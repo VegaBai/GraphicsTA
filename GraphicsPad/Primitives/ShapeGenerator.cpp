@@ -859,13 +859,9 @@ ShapeData ShapeGenerator::generateNormals(const ShapeData& data)
 		ret.indices[i] = i;
 	return ret;
 }
-/*
-ShapeData ShapeGenerator::makeOgre()
-{
-	ShapeData ret;
-	ret = loadBinarizedObjFile("Ogre.obj");
-	return ret;
-}
+
+
+
 
 ShapeData loadBinarizedObjFile(const char* filename)
 {
@@ -892,32 +888,48 @@ ShapeData loadBinarizedObjFile(const char* filename)
 	VertexPNUT* verts = reinterpret_cast<VertexPNUT*>(buf + fileHeaderSize);
 	ushort* indices = reinterpret_cast<ushort*>(buf + fileHeaderSize + vertexByteSize);
 
-	ret.vertices = verts;
+	
+	ret.vertices = new Vertex[*numVertsPtr];
+	for (int i = 0;i < *numVertsPtr; i++)
+	{
+		ret.vertices[i].position = verts[i].position;
+		ret.vertices[i].normal = verts[i].normal;
+		ret.vertices[i].uvPosition = verts[i].uv;
+		//ret.vertices[i].tangent = verts[i].tangent;
+		ret.vertices[i].color = vec3(1.0f, 1.0f, 1.0f);
+	}
 	ret.indices = indices;
 	ret.numVertices = *numVertsPtr;
 	ret.numIndices = *numIndicesPtr;
-	ret.underlyingBuffer = buf;
-	return overrideColorWithTanNormals(ret);
+//	ret.underlyingBuffer = buf;
+//	return overrideColorWithTanNormals(ret);
+	return ret;
+}
+
+ShapeData ShapeGenerator::makeOgre()
+{
+	ShapeData ret;
+	ret = loadBinarizedObjFile("file");
+	return ret;
 }
 
 void ShapeData::cleanUp()
 {
-	if (underlyingBuffer != 0)
-	{
-		delete[] underlyingBuffer;
-	}
-	else
-	{
+//	if (underlyingBuffer != 0)
+//	{
+//		delete[] underlyingBuffer;
+//	}
+//	else
+//	{
 		delete[] vertices;
 		delete[] indices;
-	}
-	if (textureFileName != NULL)
-	{
-		delete[] textureFileName;
-		textureFileName = 0;
-	}
+//	}
+//	if (textureFileName != NULL)
+//	{
+//		delete[] textureFileName;
+//		textureFileName = 0;
+//	}
 	numVertices = numIndices = 0;
 	vertices = 0;
 	indices = 0;
 }
-*/
