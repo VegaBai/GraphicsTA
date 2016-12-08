@@ -883,7 +883,7 @@ ShapeData loadBinarizedObjFile(const char* filename)
 	int* numIndicesPtr = reinterpret_cast<int*>(buf + sizeof(int));
 
 	size_t fileHeaderSize = sizeof(int) * 2;
-	size_t vertexByteSize = sizeof(Vertex) * (*numVertsPtr);
+	size_t vertexByteSize = sizeof(VertexPNUT) * (*numVertsPtr);
 
 	VertexPNUT* verts = reinterpret_cast<VertexPNUT*>(buf + fileHeaderSize);
 	ushort* indices = reinterpret_cast<ushort*>(buf + fileHeaderSize + vertexByteSize);

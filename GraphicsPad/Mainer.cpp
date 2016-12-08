@@ -57,11 +57,11 @@ int main(int argc, char* argv[])
 	Renderable* teapotRenderable1 = renderer.addRenderable(teapotGeometry,
 		glm::translate(1.0f, -1.5f, -2.0f)*glm::rotate(-90.0f, glm::vec3(1.0f, 0.0f, 0.0f))*glm::scale(0.1f, 0.1f, 0.1f), shader);
 	Renderable* sphereRenderable1 = renderer.addRenderable(sphereGeometry,
-		glm::translate(0.0f, 0.0f, -1.6f)*glm::scale(0.2f, 0.2f, 0.2f), shader,
+		glm::translate(2.0f, 0.0f, -1.6f)*glm::scale(0.2f, 0.2f, 0.2f), shader,
 		"unityChanTrans.png");
 	Renderable* objRenderable1 = renderer.addRenderable(objGeometry,
-		glm::translate(0.0f, 0.0f, -3.6f)*glm::scale(0.2f, 0.2f, 0.2f), shader,
-		"unityChanTrans.png");
+		glm::translate(0.0f, 0.0f, -3.6f)*glm::scale(1.0f, 1.0f, 1.0f), shader,
+		"Diffuse.png");
 //	Renderable* cubeLight = renderer.addRenderable(cubeGeometry,
 //		glm::scale(0.2f, 0.2f, 0.2f), shaderLight);
 	return app.exec();

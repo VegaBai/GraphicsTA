@@ -87,11 +87,11 @@ void MeRenderer::paintGL()
 //    	QImage myAlpha;
 //    	GLuint myAlphaObjectId;
 		
-//		myImg = (victim->myTex)[0];
+//		QImage myImg = *(victim->myTex);
 //		glActiveTexture(GL_TEXTURE0);
 //		glGenTextures(1, &myTextureObjectId);
 //		glBindTexture(GL_TEXTURE_2D, myTextureObjectId);
-//		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (victim->myTex)[0].width(), (victim->myTex)[0].height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, (victim->myTex)[0].bits());
+//		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, myImg.width(), myImg.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, myImg.bits());
 //		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 //		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 //
@@ -123,7 +123,9 @@ void MeRenderer::paintGL()
 		int locN = glGetUniformLocation(victim->shaderProgramInfo->programID, "Normal1");
 		if (locN >= 0) glUniform1i(locN, 2);
 		int locSpec = glGetUniformLocation(victim->shaderProgramInfo->programID, "Spec1");
-		if (locSpec >= 0) glUniform1i(locSpec, 3);		
+		if (locSpec >= 0) glUniform1i(locSpec, 3);
+		int locAo = glGetUniformLocation(victim->shaderProgramInfo->programID, "Ao1");
+		if (locAo >= 0) glUniform1i(locAo, 4);
 
 		// ambient light
 		GLint ambientLightUniformLocation = glGetUniformLocation(victim->shaderProgramInfo->programID, "ambientLight");
@@ -193,8 +195,8 @@ Renderable * MeRenderer::addRenderable(
 	const char* texName,
 	const char* alphaName, 
 	const char* normalName, 
-	const char* specName)//, 
-//	const char* aoName )
+	const char* specName, 
+	const char* aoName )
 {
 	assert(nextRenderableIndex != MAX_RENDERABLES);
 	Renderable* ret = renderables + nextRenderableIndex;
@@ -215,15 +217,18 @@ Renderable * MeRenderer::addRenderable(
 
 	QImage myImg;
 	GLuint myTextureObjectId;
+	QImage myAlpha;
+	GLuint myAlphaObjectId;
 	QImage myNormal;
 	GLuint myNormalObjectId;
 	QImage mySpec;
 	GLuint mySpecObjectId;
-	QImage myAlpha;
-	GLuint myAlphaObjectId;
+	QImage myAo;
+	GLuint myAoObjectId;
 
 	myImg = QGLWidget::convertToGLFormat(QImage(texName, "PNG"));
-//	ret->myTex = &myImg;
+	ret->myTex = &myImg;
+	*(ret->myTex) = myImg;
 	glActiveTexture(GL_TEXTURE0);
 	glGenTextures(1, &myTextureObjectId);
 	glBindTexture(GL_TEXTURE_2D, myTextureObjectId);
@@ -252,6 +257,14 @@ Renderable * MeRenderer::addRenderable(
 	glGenTextures(1, &mySpecObjectId);
 	glBindTexture(GL_TEXTURE_2D, mySpecObjectId);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, mySpec.width(), mySpec.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, mySpec.bits());
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+	myAo = QGLWidget::convertToGLFormat(QImage(aoName, "PNG"));
+	glActiveTexture(GL_TEXTURE4);
+	glGenTextures(1, &myAoObjectId);
+	glBindTexture(GL_TEXTURE_2D, myAoObjectId);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, myAo.width(), myAo.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, myAo.bits());
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 

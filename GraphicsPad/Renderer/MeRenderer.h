@@ -77,7 +77,8 @@ public:
 		const char* texName = "unityChan.png",
 		const char* alphaName = "brickspec.png",
 		const char* normalName = "Shapes.png",
-		const char* specName = "brickspec.png");
+		const char* specName = "brickspec.png",
+		const char* aoName = "AmbientOcclusion.png");
 	ShaderProgramInfo* addShaderProgram(
 		const char* vertexShaderFileName,
 		const char* fragmentShaderFileName);

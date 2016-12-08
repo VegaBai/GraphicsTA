@@ -15,6 +15,7 @@ uniform sampler2D Tex1;
 uniform sampler2D Normal1;
 uniform sampler2D Spec1;
 uniform sampler2D Alpha1;
+uniform sampler2D Ao1;
 
 void main()
 {
@@ -69,7 +70,13 @@ void main()
 	// texture
 	vec4 texColor = texture(Tex1, v_uvPosition);
 
+	// ambient occlusion
+	vec3 aoColor = vec3(texture(Ao1, v_uvPosition));
+
 //	daColor = vec4(0.0f, 0.0f, 1.0f, 1.0f);	
-	daColor = vec4(texColor * (lightColor, 1.0f));
+//	daColor = vec4(aoColor, 1.0f);
+//	daColor = vec4(lightColor, 1.0f);
+//	daColor = vec4(specularLight, 1.0f);
 //	daColor = vec4(vec3(texture(Normal1, v_uvPosition)), 0.5f);
+	daColor = vec4(vec3(texColor) * lightColor * aoColor, texColor[3]);
 }
