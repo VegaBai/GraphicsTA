@@ -13,6 +13,7 @@ struct Renderable
 	QImage myAlpha;
 	QImage myNormal;
 	QImage mySpec;
+	bool isLight = false;
 public:
 	Renderable();
 	~Renderable();

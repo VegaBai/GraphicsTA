@@ -13,7 +13,7 @@ int main(int argc, char* argv[])
 	ShapeData planeData = ShapeGenerator::makePlane();
 	ShapeData cubeData = ShapeGenerator::makeCube();	
 	ShapeData teapotData = ShapeGenerator::makeTeapot();
-	ShapeData sphereData = ShapeGenerator::makeSphere();
+//	ShapeData sphereData = ShapeGenerator::makeSphere();
 	ShapeData objData = ShapeGenerator::makeOgre();
 	renderer.show();
 
@@ -29,10 +29,10 @@ int main(int argc, char* argv[])
 		renderer.addGeometry(
 			teapotData.vertices, teapotData.vertexBufferSize(),
 			teapotData.indices, teapotData.numIndices, GL_TRIANGLES);
-	Geometry* sphereGeometry =
-		renderer.addGeometry(
-			sphereData.vertices, sphereData.vertexBufferSize(),
-			sphereData.indices, sphereData.numIndices, GL_TRIANGLES);
+//	Geometry* sphereGeometry =
+//		renderer.addGeometry(
+//			sphereData.vertices, sphereData.vertexBufferSize(),
+//			sphereData.indices, sphereData.numIndices, GL_TRIANGLES);
 	Geometry* objGeometry =
 		renderer.addGeometry(
 			objData.vertices, objData.vertexBufferSize(),
@@ -42,10 +42,13 @@ int main(int argc, char* argv[])
 		"VertexShaderTest.glsl",
 		"FragmentShaderTest.glsl");
 
-//	ShaderProgramInfo* shaderLight = renderer.addShaderProgram(
-//		"VertexShaderCodeNoLight.glsl",
-//		"FragmentShaderCodeNoLight.glsl"
-//	);
+	ShaderProgramInfo* shaderLight = renderer.addShaderProgram(
+		"VertexShaderCodeNoLight.glsl",
+		"FragmentShaderCodeNoLight.glsl"
+	);
+
+	Renderable* lightCube1 = renderer.addLight(cubeGeometry,
+		glm::mat4(), shaderLight);
 
 	Renderable* planeRenderable1 = renderer.addRenderable(planeGeometry,
 		glm::translate(0.0f, -3.0f, -5.0f), shader,
@@ -56,9 +59,9 @@ int main(int argc, char* argv[])
 //		glm::translate(-2.0f, 0.0f, 0.0f), shader);	
 	Renderable* teapotRenderable1 = renderer.addRenderable(teapotGeometry,
 		glm::translate(1.0f, -1.5f, -2.0f)*glm::rotate(-90.0f, glm::vec3(1.0f, 0.0f, 0.0f))*glm::scale(0.1f, 0.1f, 0.1f), shader);
-	Renderable* sphereRenderable1 = renderer.addRenderable(sphereGeometry,
-		glm::translate(2.0f, 0.0f, -1.6f)*glm::scale(0.2f, 0.2f, 0.2f), shader,
-		"unityChanTrans.png");
+//	Renderable* sphereRenderable1 = renderer.addRenderable(sphereGeometry,
+//		glm::translate(2.0f, 0.0f, -1.6f)*glm::scale(0.2f, 0.2f, 0.2f), shader,
+//		"unityChanTrans.png");
 	Renderable* objRenderable1 = renderer.addRenderable(objGeometry,
 		glm::translate(0.0f, 0.0f, -3.6f)*glm::scale(1.0f, 1.0f, 1.0f), shader,
 		"Diffuse.png");

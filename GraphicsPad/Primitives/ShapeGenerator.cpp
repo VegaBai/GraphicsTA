@@ -12,6 +12,20 @@ using glm::mat4;
 using glm::mat3;
 #define NUM_ARRAY_ELEMENTS(a) sizeof(a) / sizeof(*a)
 
+namespace {
+	struct VertexWithoutTangent {
+		glm::vec3 position;
+		glm::vec3 color;
+		glm::vec3 normal;
+		glm::vec2 uvPosition;
+		
+	};
+	Vertex* generateTangent(VertexWithoutTangent* vertex, const size_t numVertex, unsigned short* index, const size_t numIndex);
+	glm::vec3 getTangent(const glm::vec3& P0, const glm::vec3& P1, const glm::vec3& P2,
+		const glm::vec2& UV0, const glm::vec2& UV1, const glm::vec2& UV2);
+	
+}
+
 glm::vec3 randomColor()
 {
 	glm::vec3 ret;
@@ -25,7 +39,7 @@ ShapeData ShapeGenerator::makeTriangle()
 {
 	ShapeData ret;
 
-	Vertex myTri[] =
+	VertexWithoutTangent myTri[] =
 	{
 		vec3(+0.0f, +1.0f, +0.0f),
 		vec3(+1.0f, +0.0f, +0.0f),
@@ -57,138 +71,238 @@ ShapeData ShapeGenerator::makeTriangle()
 ShapeData ShapeGenerator::makeCube() {
 	ShapeData ret;
 //	VertexWithoutTangent stackVerts[] =
-	Vertex stackVerts[] =
+	VertexWithoutTangent stackVertsWithoutTangent[] =
 	{
-		vec3(-1.0f, +1.0f, +1.0f),  // 0
-		vec3(+1.0f, +0.0f, +0.0f),	// Color
-		vec3(+0.0f, +1.0f, +0.0f),  // Normal
-		//vec2(0.375f, 0.25f),
-		vec2(+0.0f, +1.0f), // UV
-		vec3(+1.0f, +1.0f, +1.0f),  // 1
-		vec3(+0.0f, +1.0f, +0.0f),	// Color
-		vec3(+0.0f, +1.0f, +0.0f),  // Normal
-		//vec2(0.625f, 0.25f),
-		vec2(+1.0f, +1.0f), // UV
-		vec3(+1.0f, +1.0f, -1.0f),  // 2
-		vec3(+0.0f, +0.0f, +1.0f),  // Color
-		vec3(+0.0f, +1.0f, +0.0f),  // Normal
-		//vec2(0.625f, 0.5f),
-		vec2(+1.0f, +0.0f), // UV
-		vec3(-1.0f, +1.0f, -1.0f),  // 3
-		vec3(+1.0f, +1.0f, +1.0f),  // Color
-		vec3(+0.0f, +1.0f, +0.0f),  // Normal
-		//vec2(0.375f, 0.5f),
-		vec2(+0.0f, +0.0f), // UV
-
-		vec3(-1.0f, +1.0f, -1.0f),  // 4
-		vec3(+1.0f, +0.0f, +1.0f),  // Color
-		vec3(+0.0f, +0.0f, -1.0f),  // Normal
-		//vec2(0.375f, 0.5f),
-		vec2(+0.0f, +1.0f), // UV
-		vec3(+1.0f, +1.0f, -1.0f),  // 5
-		vec3(+0.0f, +0.5f, +0.2f),  // Color
-		vec3(+0.0f, +0.0f, -1.0f),  // Normal
-		//vec2(0.625f, 0.5f),
-		vec2(+1.0f, +1.0f), // UV
-		vec3(+1.0f, -1.0f, -1.0f),  // 6
-		vec3(+0.8f, +0.6f, +0.4f),  // Color
-		vec3(+0.0f, +0.0f, -1.0f),  // Normal
-		//vec2(0.625f, 0.75f),
-		vec2(+1.0f, +0.0f), // UV
-		vec3(-1.0f, -1.0f, -1.0f),  // 7
-		vec3(+0.3f, +1.0f, +0.5f),  // Color
-		vec3(+0.0f, +0.0f, -1.0f),  // Normal
-		//vec2(0.375f, 0.75f),
-		vec2(+0.0f, +0.0f), // UV
-
-		vec3(+1.0f, +1.0f, -1.0f),  // 8
-		vec3(+0.2f, +0.5f, +0.2f),  // Color
-		vec3(+1.0f, +0.0f, +0.0f),  // Normal
-		//vec2(0.875f, 0.25f),
-		vec2(+1.0f, +0.0f), // UV
-		vec3(+1.0f, +1.0f, +1.0f),  // 9
-		vec3(+0.9f, +0.3f, +0.7f),  // Color
-		vec3(+1.0f, +0.0f, +0.0f),  // Normal
-		//vec2(0.625f, 0.25f),
-		vec2(+1.0f, +1.0f), // UV
-		vec3(+1.0f, -1.0f, +1.0f),  // 10
-		vec3(+0.3f, +0.7f, +0.5f),  // Color
-		vec3(+1.0f, +0.0f, +0.0f),  // Normal
-		//vec2(0.625f, 0.0f),
-		vec2(+0.0f, +1.0f), // UV
-		vec3(+1.0f, -1.0f, -1.0f),  // 11
-		vec3(+0.5f, +0.7f, +0.5f),  // Color
-		vec3(+1.0f, +0.0f, +0.0f),  // Normal
-		//vec2(0.875f, 0.0f),
-		vec2(+0.0f, +0.0f), // UV
-
-		vec3(-1.0f, +1.0f, +1.0f),  // 12
-		vec3(+0.7f, +0.8f, +0.2f),  // Color
-		vec3(-1.0f, +0.0f, +0.0f),  // Normal
-		//vec2(0.375f, 0.25f),
-		vec2(+1.0f, +0.0f), // UV
-		vec3(-1.0f, +1.0f, -1.0f),  // 13
-		vec3(+0.5f, +0.7f, +0.3f),  // Color
-		vec3(-1.0f, +0.0f, +0.0f),  // Normal
-		//vec2(0.125f, 0.25f),
-		vec2(+0.0f, +0.0f), // UV
-		vec3(-1.0f, -1.0f, -1.0f),  // 14
-		vec3(+0.4f, +0.7f, +0.7f),  // Color
-		vec3(-1.0f, +0.0f, +0.0f),  // Normal
-		//vec2(0.125f, 0.0f),
-		vec2(+0.0f, +1.0f), // UV
-		vec3(-1.0f, -1.0f, +1.0f),  // 15
-		vec3(+0.2f, +0.5f, +1.0f),  // Color
-		vec3(-1.0f, +0.0f, +0.0f),  // Normal
-		//vec2(0.375f, 0.0f),
-		vec2(+1.0f, +1.0f), // UV
-
-		vec3(+1.0f, +1.0f, +1.0f),  // 16
-		vec3(+0.6f, +1.0f, +0.7f),  // Color
-		vec3(+0.0f, +0.0f, +1.0f),  // Normal
-		//vec2(0.625f, 0.25f),
-		vec2(+1.0f, +0.0f), // UV
-		vec3(-1.0f, +1.0f, +1.0f),  // 17
-		vec3(+0.6f, +0.4f, +0.8f),  // Color
-		vec3(+0.0f, +0.0f, +1.0f),  // Normal
-		//vec2(0.375f, 0.25f),
-		vec2(+0.0f, +0.0f), // UV
-		vec3(-1.0f, -1.0f, +1.0f),  // 18
-		vec3(+0.2f, +0.8f, +0.7f),  // Color
-		vec3(+0.0f, +0.0f, +1.0f),  // Normal
-		//vec2(0.375f, 0.0f),
-		vec2(+0.0f, +1.0f), // UV
-		vec3(+1.0f, -1.0f, +1.0f),  // 19
-		vec3(+0.2f, +0.7f, +1.0f),  // Color
-		vec3(+0.0f, +0.0f, +1.0f),  // Normal
-		//vec2(0.625f, 0.0f),
-		vec2(+1.0f, +1.0f), // UV
-
-		vec3(+1.0f, -1.0f, -1.0f),  // 20
-		vec3(+0.8f, +0.3f, +0.7f),  // Color
-		vec3(+0.0f, -1.0f, +0.0f),  // Normal
-		//vec2(0.625f, 0.75f),
-		vec2(+1.0f, +1.0f), // UV
-		vec3(-1.0f, -1.0f, -1.0f),  // 21
-		vec3(+0.8f, +0.9f, +0.5f),  // Color
-		vec3(+0.0f, -1.0f, +0.0f),  // Normal
-		//vec2(0.375f, 0.75f),
-		vec2(+0.0f, +1.0f), // UV
-		vec3(-1.0f, -1.0f, +1.0f),  // 22
-		vec3(+0.5f, +0.8f, +0.5f),  // Color
-		vec3(+0.0f, -1.0f, +0.0f),  // Normal
-		//vec2(0.375f, 1.0f),
-		vec2(+0.0f, +0.0f), // UV
-		vec3(+1.0f, -1.0f, +1.0f),  // 23
-		vec3(+0.9f, +1.0f, +0.2f),  // Color
-		vec3(+0.0f, -1.0f, +0.0f),  // Normal
-		//vec2(0.625f, 1.0f),
-		vec2(+1.0f, +0.0f), // UV
+		//		vec3(-1.0f, +1.0f, +1.0f),  // 0
+		//		vec3(+1.0f, +0.0f, +0.0f),	// Color
+		//		vec3(+0.0f, +1.0f, +0.0f),  // Normal
+		//		//vec2(0.375f, 0.25f),
+		//		vec2(+0.0f, +1.0f), // UV
+		//		vec3(+1.0f, +1.0f, +1.0f),  // 1
+		//		vec3(+0.0f, +1.0f, +0.0f),	// Color
+		//		vec3(+0.0f, +1.0f, +0.0f),  // Normal
+		//		//vec2(0.625f, 0.25f),
+		//		vec2(+1.0f, +1.0f), // UV
+		//		vec3(+1.0f, +1.0f, -1.0f),  // 2
+		//		vec3(+0.0f, +0.0f, +1.0f),  // Color
+		//		vec3(+0.0f, +1.0f, +0.0f),  // Normal
+		//		//vec2(0.625f, 0.5f),
+		//		vec2(+1.0f, +0.0f), // UV
+		//		vec3(-1.0f, +1.0f, -1.0f),  // 3
+		//		vec3(+1.0f, +1.0f, +1.0f),  // Color
+		//		vec3(+0.0f, +1.0f, +0.0f),  // Normal
+		//		//vec2(0.375f, 0.5f),
+		//		vec2(+0.0f, +0.0f), // UV
+		//
+		//		vec3(-1.0f, +1.0f, -1.0f),  // 4
+		//		vec3(+1.0f, +0.0f, +1.0f),  // Color
+		//		vec3(+0.0f, +0.0f, -1.0f),  // Normal
+		//		//vec2(0.375f, 0.5f),
+		//		vec2(+0.0f, +1.0f), // UV
+		//		vec3(+1.0f, +1.0f, -1.0f),  // 5
+		//		vec3(+0.0f, +0.5f, +0.2f),  // Color
+		//		vec3(+0.0f, +0.0f, -1.0f),  // Normal
+		//		//vec2(0.625f, 0.5f),
+		//		vec2(+1.0f, +1.0f), // UV
+		//		vec3(+1.0f, -1.0f, -1.0f),  // 6
+		//		vec3(+0.8f, +0.6f, +0.4f),  // Color
+		//		vec3(+0.0f, +0.0f, -1.0f),  // Normal
+		//		//vec2(0.625f, 0.75f),
+		//		vec2(+1.0f, +0.0f), // UV
+		//		vec3(-1.0f, -1.0f, -1.0f),  // 7
+		//		vec3(+0.3f, +1.0f, +0.5f),  // Color
+		//		vec3(+0.0f, +0.0f, -1.0f),  // Normal
+		//		//vec2(0.375f, 0.75f),
+		//		vec2(+0.0f, +0.0f), // UV
+		//
+		//		vec3(+1.0f, +1.0f, -1.0f),  // 8
+		//		vec3(+0.2f, +0.5f, +0.2f),  // Color
+		//		vec3(+1.0f, +0.0f, +0.0f),  // Normal
+		//		//vec2(0.875f, 0.25f),
+		//		vec2(+1.0f, +0.0f), // UV
+		//		vec3(+1.0f, +1.0f, +1.0f),  // 9
+		//		vec3(+0.9f, +0.3f, +0.7f),  // Color
+		//		vec3(+1.0f, +0.0f, +0.0f),  // Normal
+		//		//vec2(0.625f, 0.25f),
+		//		vec2(+1.0f, +1.0f), // UV
+		//		vec3(+1.0f, -1.0f, +1.0f),  // 10
+		//		vec3(+0.3f, +0.7f, +0.5f),  // Color
+		//		vec3(+1.0f, +0.0f, +0.0f),  // Normal
+		//		//vec2(0.625f, 0.0f),
+		//		vec2(+0.0f, +1.0f), // UV
+		//		vec3(+1.0f, -1.0f, -1.0f),  // 11
+		//		vec3(+0.5f, +0.7f, +0.5f),  // Color
+		//		vec3(+1.0f, +0.0f, +0.0f),  // Normal
+		//		//vec2(0.875f, 0.0f),
+		//		vec2(+0.0f, +0.0f), // UV
+		//
+		//		vec3(-1.0f, +1.0f, +1.0f),  // 12
+		//		vec3(+0.7f, +0.8f, +0.2f),  // Color
+		//		vec3(-1.0f, +0.0f, +0.0f),  // Normal
+		//		//vec2(0.375f, 0.25f),
+		//		vec2(+1.0f, +0.0f), // UV
+		//		vec3(-1.0f, +1.0f, -1.0f),  // 13
+		//		vec3(+0.5f, +0.7f, +0.3f),  // Color
+		//		vec3(-1.0f, +0.0f, +0.0f),  // Normal
+		//		//vec2(0.125f, 0.25f),
+		//		vec2(+0.0f, +0.0f), // UV
+		//		vec3(-1.0f, -1.0f, -1.0f),  // 14
+		//		vec3(+0.4f, +0.7f, +0.7f),  // Color
+		//		vec3(-1.0f, +0.0f, +0.0f),  // Normal
+		//		//vec2(0.125f, 0.0f),
+		//		vec2(+0.0f, +1.0f), // UV
+		//		vec3(-1.0f, -1.0f, +1.0f),  // 15
+		//		vec3(+0.2f, +0.5f, +1.0f),  // Color
+		//		vec3(-1.0f, +0.0f, +0.0f),  // Normal
+		//		//vec2(0.375f, 0.0f),
+		//		vec2(+1.0f, +1.0f), // UV
+		//
+		//		vec3(+1.0f, +1.0f, +1.0f),  // 16
+		//		vec3(+0.6f, +1.0f, +0.7f),  // Color
+		//		vec3(+0.0f, +0.0f, +1.0f),  // Normal
+		//		//vec2(0.625f, 0.25f),
+		//		vec2(+1.0f, +0.0f), // UV
+		//		vec3(-1.0f, +1.0f, +1.0f),  // 17
+		//		vec3(+0.6f, +0.4f, +0.8f),  // Color
+		//		vec3(+0.0f, +0.0f, +1.0f),  // Normal
+		//		//vec2(0.375f, 0.25f),
+		//		vec2(+0.0f, +0.0f), // UV
+		//		vec3(-1.0f, -1.0f, +1.0f),  // 18
+		//		vec3(+0.2f, +0.8f, +0.7f),  // Color
+		//		vec3(+0.0f, +0.0f, +1.0f),  // Normal
+		//		//vec2(0.375f, 0.0f),
+		//		vec2(+0.0f, +1.0f), // UV
+		//		vec3(+1.0f, -1.0f, +1.0f),  // 19
+		//		vec3(+0.2f, +0.7f, +1.0f),  // Color
+		//		vec3(+0.0f, +0.0f, +1.0f),  // Normal
+		//		//vec2(0.625f, 0.0f),
+		//		vec2(+1.0f, +1.0f), // UV
+		//
+		//		vec3(+1.0f, -1.0f, -1.0f),  // 20
+		//		vec3(+0.8f, +0.3f, +0.7f),  // Color
+		//		vec3(+0.0f, -1.0f, +0.0f),  // Normal
+		//		//vec2(0.625f, 0.75f),
+		//		vec2(+1.0f, +1.0f), // UV
+		//		vec3(-1.0f, -1.0f, -1.0f),  // 21
+		//		vec3(+0.8f, +0.9f, +0.5f),  // Color
+		//		vec3(+0.0f, -1.0f, +0.0f),  // Normal
+		//		//vec2(0.375f, 0.75f),
+		//		vec2(+0.0f, +1.0f), // UV
+		//		vec3(-1.0f, -1.0f, +1.0f),  // 22
+		//		vec3(+0.5f, +0.8f, +0.5f),  // Color
+		//		vec3(+0.0f, -1.0f, +0.0f),  // Normal
+		//		//vec2(0.375f, 1.0f),
+		//		vec2(+0.0f, +0.0f), // UV
+		//		vec3(+1.0f, -1.0f, +1.0f),  // 23
+		//		vec3(+0.9f, +1.0f, +0.2f),  // Color
+		//		vec3(+0.0f, -1.0f, +0.0f),  // Normal
+		//		//vec2(0.625f, 1.0f),
+		//		vec2(+1.0f, +0.0f), // UV
+		//	};
+		vec3(-1.0f, +1.0f, +1.0f), // 0
+		vec3(+1.0f, +0.0f, +0.0f), // Color
+		vec3(+0.0f, +1.0f, +0.0f), // Normal
+		vec2(0.0f, 0.0f),
+		vec3(+1.0f, +1.0f, +1.0f), // 1
+		vec3(+0.0f, +1.0f, +0.0f), // Color
+		vec3(+0.0f, +1.0f, +0.0f), // Normal
+		vec2(1.0f, 0.0f),
+		vec3(+1.0f, +1.0f, -1.0f), // 2
+		vec3(+0.0f, +0.0f, +1.0f), // Color
+		vec3(+0.0f, +1.0f, +0.0f), // Normal
+		vec2(1.0f, 1.0f),
+		vec3(-1.0f, +1.0f, -1.0f), // 3
+		vec3(+1.0f, +1.0f, +1.0f), // Color
+		vec3(+0.0f, +1.0f, +0.0f), // Normal
+		vec2(0.0f, 1.0f),
+		
+		vec3(-1.0f, +1.0f, -1.0f), // 4
+		vec3(+1.0f, +0.0f, +1.0f), // Color
+		vec3(+0.0f, +0.0f, -1.0f), // Normal
+		vec2(1.0f, 1.0f),
+		vec3(+1.0f, +1.0f, -1.0f), // 5
+		vec3(+0.0f, +0.5f, +0.2f), // Color
+		vec3(+0.0f, +0.0f, -1.0f), // Normal
+		vec2(0.0f, 1.0f),
+		vec3(+1.0f, -1.0f, -1.0f), // 6
+		vec3(+0.8f, +0.6f, +0.4f), // Color
+		vec3(+0.0f, +0.0f, -1.0f), // Normal
+		vec2(0.0f, 0.0f),
+		vec3(-1.0f, -1.0f, -1.0f), // 7
+		vec3(+0.3f, +1.0f, +0.5f), // Color
+		vec3(+0.0f, +0.0f, -1.0f), // Normal
+		vec2(1.0f, 0.0f),
+		
+		vec3(+1.0f, +1.0f, -1.0f), // 8
+		vec3(+0.2f, +0.5f, +0.2f), // Color
+		vec3(+1.0f, +0.0f, +0.0f), // Normal
+		vec2(1.0f, 1.0f),
+		vec3(+1.0f, +1.0f, +1.0f), // 9
+		vec3(+0.9f, +0.3f, +0.7f), // Color
+		vec3(+1.0f, +0.0f, +0.0f), // Normal
+		vec2(0.0f, 1.0f),
+		vec3(+1.0f, -1.0f, +1.0f), // 10
+		vec3(+0.3f, +0.7f, +0.5f), // Color
+		vec3(+1.0f, +0.0f, +0.0f), // Normal
+		vec2(0.0f, 0.0f),
+		vec3(+1.0f, -1.0f, -1.0f), // 11
+		vec3(+0.5f, +0.7f, +0.5f), // Color
+		vec3(+1.0f, +0.0f, +0.0f), // Normal
+		vec2(1.0f, 0.0f),
+		
+		vec3(-1.0f, +1.0f, +1.0f), // 12
+		vec3(+0.7f, +0.8f, +0.2f), // Color
+		vec3(-1.0f, +0.0f, +0.0f), // Normal
+		vec2(1.0f, 1.0f),
+		vec3(-1.0f, +1.0f, -1.0f), // 13
+		vec3(+0.5f, +0.7f, +0.3f), // Color
+		vec3(-1.0f, +0.0f, +0.0f), // Normal
+		vec2(0.0f, 1.0f),
+		vec3(-1.0f, -1.0f, -1.0f), // 14
+		vec3(+0.4f, +0.7f, +0.7f), // Color
+		vec3(-1.0f, +0.0f, +0.0f), // Normal
+		vec2(0.0f, 0.0f),
+		vec3(-1.0f, -1.0f, +1.0f), // 15
+		vec3(+0.2f, +0.5f, +1.0f), // Color
+		vec3(-1.0f, +0.0f, +0.0f), // Normal
+		vec2(1.0f, 0.0f),
+		
+		vec3(+1.0f, +1.0f, +1.0f), // 16
+		vec3(+0.6f, +1.0f, +0.7f), // Color
+		vec3(+0.0f, +0.0f, +1.0f), // Normal
+		vec2(1.0f, 1.0f),
+		vec3(-1.0f, +1.0f, +1.0f), // 17
+		vec3(+0.6f, +0.4f, +0.8f), // Color
+		vec3(+0.0f, +0.0f, +1.0f), // Normal
+		vec2(0.0f, 1.0f),
+		vec3(-1.0f, -1.0f, +1.0f), // 18
+		vec3(+0.2f, +0.8f, +0.7f), // Color
+		vec3(+0.0f, +0.0f, +1.0f), // Normal
+		vec2(0.0f, 0.0f),
+		vec3(+1.0f, -1.0f, +1.0f), // 19
+		vec3(+0.2f, +0.7f, +1.0f), // Color
+		vec3(+0.0f, +0.0f, +1.0f), // Normal
+		vec2(1.0f, 0.0f),
+		
+		vec3(+1.0f, -1.0f, -1.0f), // 20
+		vec3(+0.8f, +0.3f, +0.7f), // Color
+		vec3(+0.0f, -1.0f, +0.0f), // Normal
+		vec2(0.0f, 1.0f),
+		vec3(-1.0f, -1.0f, -1.0f), // 21
+		vec3(+0.8f, +0.9f, +0.5f), // Color
+		vec3(+0.0f, -1.0f, +0.0f), // Normal
+		vec2(1.0f, 1.0f),
+		vec3(-1.0f, -1.0f, +1.0f), // 22
+		vec3(+0.5f, +0.8f, +0.5f), // Color
+		vec3(+0.0f, -1.0f, +0.0f), // Normal
+		vec2(1.0f, 0.0f),
+		vec3(+1.0f, -1.0f, +1.0f), // 23
+		vec3(+0.9f, +1.0f, +0.2f), // Color
+		vec3(+0.0f, -1.0f, +0.0f), // Normal
+		vec2(0.0f, 0.0f),
 	};
 
-	ret.numVertices = NUM_ARRAY_ELEMENTS(stackVerts);
-	ret.vertices = new Vertex[ret.numVertices];
-	memcpy(ret.vertices, stackVerts, sizeof(stackVerts));
+	
 
 	unsigned short stackIndices[] = {
 		0,   1,  2,  0,  2,  3, // Top
@@ -199,6 +313,12 @@ ShapeData ShapeGenerator::makeCube() {
 		20, 22, 21, 20, 23, 22, // Bottom
 	};
 	ret.numIndices = NUM_ARRAY_ELEMENTS(stackIndices);
+	ret.numVertices = NUM_ARRAY_ELEMENTS(stackVertsWithoutTangent);
+	Vertex* stackVerts = generateTangent(stackVertsWithoutTangent, ret.numVertices, stackIndices, ret.numIndices);
+	
+	ret.vertices = stackVerts;
+//	memcpy(ret.vertices, stackVerts, sizeof(stackVerts));
+
 	ret.indices = new GLushort[ret.numIndices];
 	memcpy(ret.indices, stackIndices, sizeof(stackIndices));
 
@@ -208,7 +328,7 @@ ShapeData ShapeGenerator::makeCube() {
 ShapeData ShapeGenerator::makeArrow()
 {
 	ShapeData ret;
-	Vertex stackVerts[] =
+	VertexWithoutTangent stackVerts[] =
 	{
 		// Top side of arrow head
 		vec3(+0.00f, +0.25f, -0.25f),         // 0
@@ -430,6 +550,7 @@ ShapeData ShapeGenerator::makePlaneVerts(uint dimensions)
 			thisVert.position.z = i - half;
 			thisVert.position.y = 0;
 			thisVert.normal = glm::vec3(0.0f, 1.0f, 0.0f);
+			thisVert.tangent = glm::vec3(0.0f, 1.0f, 0.0f);
 			thisVert.uvPosition = vec2(float(i)/float(dimensions), float(j)/ float(dimensions));
 			thisVert.color = randomColor();
 		}
@@ -540,10 +661,10 @@ ShapeData ShapeGenerator::makeTeapot(uint tesselation, const glm::mat4& lidTrans
 	moveLid(tesselation, vertices, lidTransform);
 
 	// Adapt/convert their data format to mine
-	ret.vertices = new Vertex[ret.numVertices];
+	VertexWithoutTangent* stackVertsWithoutTangent = new VertexWithoutTangent[ret.numVertices];
 	for (uint i = 0; i < ret.numVertices; i++)
 	{
-		Vertex& v = ret.vertices[i];
+		VertexWithoutTangent& v = stackVertsWithoutTangent[i];
 		v.position.x = vertices[i * 3 + 0];
 		v.position.y = vertices[i * 3 + 1];
 		v.position.z = vertices[i * 3 + 2];
@@ -553,6 +674,7 @@ ShapeData ShapeGenerator::makeTeapot(uint tesselation, const glm::mat4& lidTrans
 		v.color = randomColor();
 		v.uvPosition = vec2((vertices[i * 3 + 0]+1.0f)/2.0f, (vertices[i * 3 + 1] + 1.0f) / 2.0f);
 	}
+	ret.vertices = generateTangent(stackVertsWithoutTangent, ret.numVertices, ret.indices, ret.numIndices);
 	return ret;
 }
 
@@ -895,7 +1017,7 @@ ShapeData loadBinarizedObjFile(const char* filename)
 		ret.vertices[i].position = verts[i].position;
 		ret.vertices[i].normal = verts[i].normal;
 		ret.vertices[i].uvPosition = verts[i].uv;
-		//ret.vertices[i].tangent = verts[i].tangent;
+		ret.vertices[i].tangent = vec3(verts[i].tangent);
 		ret.vertices[i].color = vec3(1.0f, 1.0f, 1.0f);
 	}
 	ret.indices = indices;
@@ -932,4 +1054,80 @@ void ShapeData::cleanUp()
 	numVertices = numIndices = 0;
 	vertices = 0;
 	indices = 0;
+}
+
+
+namespace {
+	Vertex* generateTangent(VertexWithoutTangent* vertex, const size_t numVertex, unsigned short* index, const size_t numIndex) {
+		Vertex* ret = new Vertex[numVertex];
+		std::vector<size_t> nums(numVertex);
+		for (size_t i = 0; i < numVertex; i++) {
+			ret[i].position = vertex[i].position;
+			ret[i].color = vertex[i].color;
+			ret[i].normal = vertex[i].normal;
+			ret[i].uvPosition = vertex[i].uvPosition;
+			ret[i].tangent = glm::vec3();
+			
+		}
+		for (size_t i = 0; i < numIndex; i += 3) {
+			glm::vec3 tangent = getTangent(vertex[index[i]].position, vertex[index[i + 1]].position, vertex[index[i + 2]].position, vertex[index[i]].uvPosition, vertex[index[i + 1]].uvPosition, vertex[index[i + 2]].uvPosition);
+			ret[index[i]].tangent += tangent;
+			ret[index[i + 1]].tangent += tangent;
+			ret[index[i + 2]].tangent += tangent;
+			nums[index[i]] ++;
+			nums[index[i + 1]] ++;
+			nums[index[i + 2]] ++;
+			
+		}
+		for (size_t i = 0; i < numVertex; i++) {
+			if (nums[i] > 0) {
+				ret[i].tangent /= nums[i];
+				
+			}
+			
+		}
+		return ret;
+		
+	}
+	glm::vec3 getTangent(const glm::vec3& P0, const glm::vec3& P1, const glm::vec3& P2,
+		const glm::vec2& UV0, const glm::vec2& UV1, const glm::vec2& UV2)
+		 {
+				//let P = v1 - v0
+			glm::vec3 P = P1 - P0;
+				//let Q = v2 - v0
+			glm::vec3 Q = P2 - P0;
+				//using Eric Lengyel's approach with a few modifications
+					//from Mathematics for 3D Game Programmming and Computer Graphics
+					// want to be able to trasform a vector in Object Space to Tangent Space
+					// such that the x-axis cooresponds to the 's' direction and the
+					// y-axis corresponds to the 't' direction, and the z-axis corresponds
+					// to <0,0,1>, straight up out of the texture map
+			
+			float s1 = UV1.x - UV0.x;
+		float t1 = UV1.y - UV0.y;
+		float s2 = UV2.x - UV0.x;
+		float t2 = UV2.y - UV0.y;
+		
+			
+					//we need to solve the equation
+					// P = s1*T + t1*B
+					// Q = s2*T + t2*B
+					// for T and B
+			
+			
+					//this is a linear system with six unknowns and six equatinos, for TxTyTz BxByBz
+					//[px,py,pz] = [s1,t1] * [Tx,Ty,Tz]
+					// qx,qy,qz     s2,t2     Bx,By,Bz
+			
+					//multiplying both sides by the inverse of the s,t matrix gives
+					//[Tx,Ty,Tz] = 1/(s1t2-s2t1) *  [t2,-t1] * [px,py,pz]
+					// Bx,By,Bz                      -s2,s1	    qx,qy,qz  
+			
+					//solve this for the unormalized T and B to get from tangent to object space
+			
+			glm::vec3 tangent = glm::normalize(glm::vec3(t2*P.x - t1*Q.x, t2*P.y - t1*Q.y, t2*P.z - t1*Q.z));
+		
+			return tangent;
+		}
+	
 }

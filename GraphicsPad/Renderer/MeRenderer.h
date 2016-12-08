@@ -45,7 +45,7 @@ class MeRenderer : public QGLWidget
 	MeRenderer& operator=(MeRenderer&);
 	~MeRenderer();
 
-	glm::vec3 lightPosition = glm::vec3(-2.0f, 2.0f, -3.0f);
+	glm::vec3 lightPosition = glm::vec3(-2.0f, -2.0f, -2.0f);
 		
 //	const char* texName = "unityChan.png";
 //	QImage myImg;
@@ -82,6 +82,10 @@ public:
 	ShaderProgramInfo* addShaderProgram(
 		const char* vertexShaderFileName,
 		const char* fragmentShaderFileName);
+	Renderable* addLight(
+		const Geometry* what = 0,
+		const glm::mat4& where = glm::mat4(),
+		const ShaderProgramInfo* how = 0);
 	inline static MeRenderer& getInstance() 
 	{ 
 		if (instance == 0)

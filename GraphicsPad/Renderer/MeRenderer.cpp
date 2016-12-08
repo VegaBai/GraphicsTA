@@ -57,6 +57,7 @@ void MeRenderer::paintGL()
 		glEnableVertexAttribArray(1);
 		glEnableVertexAttribArray(2);
 		glEnableVertexAttribArray(3);
+		glEnableVertexAttribArray(4);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
 			sizeof(Vertex), (void*)(g->vertexDataBufferByteOffset));
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,
@@ -65,6 +66,8 @@ void MeRenderer::paintGL()
 			sizeof(Vertex), (void*)(g->vertexDataBufferByteOffset + sizeof(float) * 6));
 		glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE,
 			sizeof(Vertex), (void*)(g->vertexDataBufferByteOffset + sizeof(float) * 9));
+		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE,
+			sizeof(Vertex), (void*)(g->vertexDataBufferByteOffset + sizeof(float) * 11));
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g->buffer->bufferID);
 
 		
@@ -74,9 +77,23 @@ void MeRenderer::paintGL()
 
 		if (mvpLocation != -1)
 		{
-			glm::mat4 mvp = worldToProjection * victim->modelToWorld;
-			glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, &mvp[0][0]);
+			if (victim->isLight == true)
+			{
+				glm::mat4 lightModelToWorld = glm::mat4(glm::translate(lightPosition) * glm::scale(0.1f, 0.1f, 0.1f));
+				glm::mat4 mvp = worldToProjection * lightModelToWorld;
+				glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, &mvp[0][0]);
+			}
+			else {
+				glm::mat4 mvp = worldToProjection * victim->modelToWorld;
+				glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, &mvp[0][0]);
+			}				
 		}
+
+		glm::mat4 modelToWorldInverseTrans = glm::inverse(glm::transpose(victim->modelToWorld));
+		GLint modelToWorldInvertTransUniformLocation =
+			glGetUniformLocation(victim->shaderProgramInfo->programID, "modelToWorldInvertTrans");
+		glUniformMatrix4fv(modelToWorldInvertTransUniformLocation, 1, GL_FALSE,
+			&modelToWorldInverseTrans[0][0]);
 
  //   	QImage myImg;
     	GLuint myTextureObjectId;
@@ -276,6 +293,24 @@ Renderable * MeRenderer::addRenderable(
 //	if (locN >= 0) glUniform1i(locN, 2);
 //	int locSpec = glGetUniformLocation(ret->shaderProgramInfo->programID, "Spec1");
 //	if (locSpec >= 0) glUniform1i(locSpec, 3);			
+
+	return ret;
+}
+
+Renderable * MeRenderer::addLight(
+	const Geometry* what,
+	const glm::mat4& where,
+	const ShaderProgramInfo* how)
+{
+	assert(nextRenderableIndex != MAX_RENDERABLES);
+	Renderable* ret = renderables + nextRenderableIndex;
+	nextRenderableIndex++;
+
+	ret->geometry = what;
+//	ret->modelToWorld = where;
+	ret->modelToWorld = glm::mat4(glm::translate(lightPosition) * glm::scale(0.1f, 0.1f, 0.1f));
+	ret->shaderProgramInfo = how;
+	ret->isLight = true;
 
 	return ret;
 }

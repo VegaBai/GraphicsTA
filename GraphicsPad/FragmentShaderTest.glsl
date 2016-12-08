@@ -4,12 +4,14 @@ in vec3 theColor;
 in vec3 v_position;
 in vec3 v_normal;
 in vec2 v_uvPosition;
+in vec3 v_tangent;
 out vec4 daColor;
 
 uniform vec3 ambientLight;
 uniform vec3 diffuseLightPosition;
 uniform mat4 modelToWorldTransform;
 uniform vec3 eyePositionWorld;
+uniform mat4 modelToWorldInvertTrans;
 
 uniform sampler2D Tex1;
 uniform sampler2D Normal1;
@@ -20,25 +22,32 @@ uniform sampler2D Ao1;
 void main()
 {
 	vec3 vertexWorld = vec3(modelToWorldTransform * vec4(v_position, 1.0));
-	vec3 normalWorld = normalize(vec3(modelToWorldTransform * vec4(v_normal, 0.0f)));
+	vec3 normalWorld = normalize(vec3(modelToWorldInvertTrans * vec4(v_normal, 0.0f)));
+	vec3 tangentWorld = normalize(vec3(modelToWorldTransform * vec4(v_tangent, 0.0f)));
+	vec3 bitangentWorld = cross(normalWorld, tangentWorld);
+	mat3 tbn = mat3(tangentWorld, bitangentWorld, normalWorld);
+
+	vec3 normalMap = vec3(texture(Normal1, v_uvPosition));
+	normalMap = normalize(normalMap * 2.0 - 1.0);
+	normalWorld = normalize(tbn * normalMap);
 
 	// normal map
-	mat3 normalTangentTransform;
-	normalTangentTransform[0] = vec3(1.0, 0.0, 0.0);
-	normalTangentTransform[1] = vec3(0.0, 1.0, 0.0);
-	float scaleNormal = 1.0f/normalWorld[2];
-
-	normalTangentTransform[2] = normalize(normalWorld * vec3(scaleNormal, scaleNormal, scaleNormal));
-	vec3 normalMap = normalize(vec3(texture(Normal1, v_uvPosition)));
-	vec3 normalWorldFinal = normalize( normalTangentTransform * normalMap) ;
-	if(normalWorld[1] <0)
-	{
-		normalWorldFinal*= vec3(1.0f, -1.0f, 1.0f);
-	}  
-	if(normalWorld[2] <0)
-	{
-		normalWorldFinal*= vec3(1.0f, 1.0f, -1.0f);
-	}  
+//	mat3 normalTangentTransform;
+//	normalTangentTransform[0] = vec3(1.0, 0.0, 0.0);
+//	normalTangentTransform[1] = vec3(0.0, 1.0, 0.0);
+//	float scaleNormal = 1.0f/normalWorld[2];
+//
+//	normalTangentTransform[2] = normalize(normalWorld * vec3(scaleNormal, scaleNormal, scaleNormal));
+//	vec3 normalMap = normalize(vec3(texture(Normal1, v_uvPosition)));
+//	vec3 normalWorldFinal = normalize( normalTangentTransform * normalMap) ;
+//	if(normalWorld[1] <0)
+//	{
+//		normalWorldFinal*= vec3(1.0f, -1.0f, 1.0f);
+//	}  
+//	if(normalWorld[2] <0)
+//	{
+//		normalWorldFinal*= vec3(1.0f, 1.0f, -1.0f);
+//	}  
 
 //	normalWorld = normalWorldFinal;
 
