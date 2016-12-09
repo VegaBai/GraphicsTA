@@ -75,7 +75,7 @@ public:
 		const glm::mat4& where = glm::mat4(),
 		const ShaderProgramInfo* how = 0,
 		const char* texName = "unityChan.png",
-		const char* alphaName = "brickspec.png",
+		const char* alphaName = "unityChan.png",
 		const char* normalName = "Shapes.png",
 		const char* specName = "brickspec.png",
 		const char* aoName = "AmbientOcclusion.png");
