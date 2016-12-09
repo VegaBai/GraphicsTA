@@ -550,7 +550,7 @@ ShapeData ShapeGenerator::makePlaneVerts(uint dimensions)
 			thisVert.position.z = i - half;
 			thisVert.position.y = 0;
 			thisVert.normal = glm::vec3(0.0f, 1.0f, 0.0f);
-			thisVert.tangent = glm::vec3(0.0f, 1.0f, 0.0f);
+//			thisVert.tangent = glm::vec3(0.0f, 1.0f, 0.0f);
 			thisVert.uvPosition = vec2(float(i)/float(dimensions), float(j)/ float(dimensions));
 			thisVert.color = randomColor();
 		}
@@ -642,6 +642,16 @@ ShapeData ShapeGenerator::makePlane(uint dimensions)
 	ShapeData ret2 = makePlaneIndices(dimensions);
 	ret.numIndices = ret2.numIndices;
 	ret.indices = ret2.indices;
+	VertexWithoutTangent* thisVert;
+	thisVert = new VertexWithoutTangent[ret.numVertices];
+	for (int i = 0; i < ret.numVertices; i++)
+	{
+		thisVert[i].position = ret.vertices[i].position;
+		thisVert[i].color = ret.vertices[i].color;
+		thisVert[i].normal = ret.vertices[i].normal;
+		thisVert[i].uvPosition = ret.vertices[i].uvPosition;
+	}
+	ret.vertices = generateTangent(thisVert, ret.numVertices, ret.indices, ret.numIndices);
 	return ret;
 }
 

@@ -87,5 +87,5 @@ void main()
 //	daColor = vec4(lightColor, 1.0f);
 //	daColor = vec4(specularLight, 1.0f);
 //	daColor = vec4(vec3(texture(Normal1, v_uvPosition)), 0.5f);
-	daColor = vec4(vec3(texColor) * lightColor * aoColor, texColor[3]);
+	daColor = vec4(vec3(texColor) * lightColor * aoColor * (2.0f, 2.0f, 2.0f), texColor[3]);
 }

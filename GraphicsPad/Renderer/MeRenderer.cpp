@@ -146,7 +146,7 @@ void MeRenderer::paintGL()
 
 		// ambient light
 		GLint ambientLightUniformLocation = glGetUniformLocation(victim->shaderProgramInfo->programID, "ambientLight");
-		glm::vec3 ambientLight(0.3f, 0.0f, 0.0f);
+		glm::vec3 ambientLight(0.5f, 0.1f, 0.1f);
 		glUniform3fv(ambientLightUniformLocation, 1, &ambientLight[0]);
 		// diffuse light
 		GLint diffuseLightPositionUniformLocation = glGetUniformLocation(victim->shaderProgramInfo->programID, "diffuseLightPosition");
@@ -244,8 +244,8 @@ Renderable * MeRenderer::addRenderable(
 	GLuint myAoObjectId;
 
 	myImg = QGLWidget::convertToGLFormat(QImage(texName, "PNG"));
-	ret->myTex = &myImg;
-	*(ret->myTex) = myImg;
+//	ret->myTex = &myImg;
+//	*(ret->myTex) = myImg;
 	glActiveTexture(GL_TEXTURE0);
 	glGenTextures(1, &myTextureObjectId);
 	glBindTexture(GL_TEXTURE_2D, myTextureObjectId);
