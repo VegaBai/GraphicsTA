@@ -9,10 +9,10 @@ struct Renderable
 	const Geometry* geometry; //what
 	glm::mat4 modelToWorld; //where
 	const ShaderProgramInfo* shaderProgramInfo; //how
-	QImage* myTex;
-	QImage myAlpha;
-	QImage myNormal;
-	QImage mySpec;
+//	QImage myTex;
+//	QImage myAlpha;
+//	QImage myNormal;
+//	QImage mySpec;
 	bool isLight = false;
 public:
 	Renderable();
