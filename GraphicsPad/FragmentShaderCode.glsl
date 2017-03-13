@@ -65,8 +65,8 @@ void main()
 	// texture
 //	daColor = texture(Tex1, v_uvPosition);
 
-//	daColor = daColor * theColor;
+	daColor = daColor * theColor;
 //	daColor = vec4(normalWorldFinal, 1.0f);
 //	daColor = theColor;
-	daColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
+//	daColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
 }

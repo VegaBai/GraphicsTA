@@ -74,11 +74,11 @@ public:
 		const Geometry* what = 0,
 		const glm::mat4& where = glm::mat4(),
 		const ShaderProgramInfo* how = 0,
-		const char* texName = "unityChan.png",
-		const char* alphaName = "brickspec.png",
-		const char* normalName = "Shapes.png",
-		const char* specName = "brickspec.png",
-		const char* aoName = "AmbientOcclusion.png");
+		const char* texName = "BaseMaterial.png",
+		const char* alphaName = "BaseMaterial.png",
+		const char* normalName = "BaseMaterial.png",
+		const char* specName = "BaseMaterial.png",
+		const char* aoName = "BaseMaterial.png");
 	ShaderProgramInfo* addShaderProgram(
 		const char* vertexShaderFileName,
 		const char* fragmentShaderFileName);

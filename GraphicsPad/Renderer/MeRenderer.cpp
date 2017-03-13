@@ -146,7 +146,7 @@ void MeRenderer::paintGL()
 
 		// ambient light
 		GLint ambientLightUniformLocation = glGetUniformLocation(victim->shaderProgramInfo->programID, "ambientLight");
-		glm::vec3 ambientLight(0.3f, 0.0f, 0.0f);
+		glm::vec3 ambientLight(0.3f, 0.3f, 0.3f);
 		glUniform3fv(ambientLightUniformLocation, 1, &ambientLight[0]);
 		// diffuse light
 		GLint diffuseLightPositionUniformLocation = glGetUniformLocation(victim->shaderProgramInfo->programID, "diffuseLightPosition");
